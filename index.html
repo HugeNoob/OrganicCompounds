@@ -1,0 +1,24 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Organic Compound Diagram</title>
+  <meta name="description" content="A simple block diagram editor that includes context menus for changing shapes and colors." />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://unpkg.com/gojs/release/go-debug.js"></script>
+</head>
+
+<body onload="init()">
+
+  <div id="sample">
+    <div id="myDiagramDiv" style="border: solid 1px black; width:100%; height:600px"></div>
+    <div id="buttons">
+      <button id="loadModel" style='width: 100px; height: 50px;' onclick="logData()">Data</button>
+    </div>
+  </div>
+
+  <script src='./script.js'></script>
+
+</body>
+</html>
