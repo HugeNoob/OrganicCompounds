@@ -1,3 +1,8 @@
+
+
+// this version features bond changing via adorned arrows
+
+
 const init = () => {
     var $ = go.GraphObject.make;
 
@@ -9,6 +14,8 @@ const init = () => {
           allowClipboard: false,
           "undoManager.isEnabled": true,
         });
+
+    // myDiagram.grid.visible = true
 
     myDiagram.nodeTemplate =
       $(go.Node, "Spot",
@@ -81,7 +88,7 @@ const init = () => {
               p.x += Math.sign(p.x) * 60;
               p.y += Math.sign(p.y) * 60;
               p.add(selnode.location);
-              p.snapToGridPoint(e.diagram.grid.gridOrigin, e.diagram.grid.gridCellSize);
+              // p.snapToGridPoint(e.diagram.grid.gridOrigin, e.diagram.grid.gridCellSize);
 
               // make the new node a copy of the selected node
               var nodedata = m.copyNodeData(selnode.data);
@@ -156,7 +163,18 @@ const init = () => {
 
     myDiagram.linkTemplate =
       $(go.Link,
-        $(go.Shape, 'Triangle'),
+        {
+          click: function(e, link) {
+            e.diagram.commit(function(diag) { link.path.stroke = "royalblue"; });
+          },
+          doubleClick: function(e, link) {
+            e.diagram.commit(function(diag) { link.path.stroke = "red"; });
+          },
+          mouseHover: function(e, link) {
+            e.diagram.commit(function(diag) { link.path.stroke = "black"; });
+          }
+        },
+        $(go.Shape),
       );
     
     myDiagram.model =
