@@ -9,69 +9,88 @@ const init = () => {
     myDiagram =
       $(go.Diagram, "myDiagramDiv",
         {
+          initialScale: 1.5,
           maxSelectionCount: 1,
           allowLink: false,  // no user-drawn links
+          'dragSelectingTool.isEnabled': false,
           allowClipboard: false,
-          "undoManager.isEnabled": true,
         });
 
-    // myDiagram.grid.visible = true
+    const changeCharge = (e, node) => {
+      e.diagram.commit(function(diag) {
+        var nodeData = node.tb
+        myDiagram.model.removeNodeData(nodeData)
+        var charge = nodeData['charge']
 
-    myDiagram.nodeTemplate =
+        if(charge === 0){
+          charge = 1
+        } else if (charge === 1) {
+          charge = -1
+        } else {
+          charge = 0
+        }
+
+        var newNodeData = {...nodeData, charge: charge}
+        myDiagram.model.addNodeData(newNodeData)
+      })
+    }
+
+    var nodeMap = new go.Map();
+    // Generic node template for both cations and anions to be inherited/copied
+    var elementTemplate =
       $(go.Node, "Spot",
         {
           locationObjectName: "SHAPE",
           locationSpot: go.Spot.Center, 
           resizable: false,
-          itemTemplate:
-            $(go.Panel,
-              { fromSpot: go.Spot.Center, toSpot: go.Spot.Center, toMaxLinks: 1, fromMaxLinks: 1 },   // port properties on the node
-              new go.Binding("portId", "id"),
-              new go.Binding("alignment", "spot", go.Spot.parse),
-              $(go.Shape, "Circle",
-                { width: 3, height: 3, background: "transparent", fill: null, stroke: null },
-              ),
-            ),
+          doubleClick: changeCharge
         },
-        new go.Binding("itemArray", "ports"),
         // these Bindings are TwoWay because the DraggingTool modifies the target properties
         new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
         $(go.TextBlock,
           {
-            margin: 1, 
+            margin: 2, 
             textAlign: "center",
             editable: true, 
             isMultiline: false,
             font: "32px Fira Sans, sans-serif",
           },
           // this Binding is TwoWay due to the user editing the text with the TextEditingTool
-          new go.Binding("text").makeTwoWay())
+          new go.Binding("text").makeTwoWay()),
+          $(go.Shape,
+            {
+              height: 10,
+              width: 10,
+              alignment: go.Spot.TopRight,
+              figure: 'PlusLine',
+              stroke: 'black',
+            },
+            new go.Binding('figure', 'charge', function(c){
+              if(c === 1){
+                return 'PlusLine'
+              } else {
+                return 'MinusLine'
+              }
+            }),
+            new go.Binding("stroke", "charge", function(c) { return c === 0 ? 'white' : 'black'; })
+            )
       );
 
-    // Node selection adornment
+    elementTemplate.data = {};
+    elementTemplate.data = null;
+
+    var cationTemplate = elementTemplate.copy()
+    nodeMap.add('cation', cationTemplate);
+
+    var anionTemplate = elementTemplate.copy()
+    nodeMap.add('anion', anionTemplate);
+    
+    myDiagram.nodeTemplateMap = nodeMap
+
+    // Node selection adornment for anion template ONLY
     // Include four large triangular buttons so that the user can easily make a copy
     // of the node, move it to be in that direction relative to the original node,
     // and add a link to the new node.
-
-    const findExistingLinks = (selectedNodeData, direction) => {
-      selectedKey = myDiagram.model.getKeyForNodeData(selectedNodeData)
-      oppositeDirection = correspondingDirection[direction]
-      var existingLink = null;
-      var tempLinkDataArray = [ ...myDiagram.model.linkDataArray]
-      for(let link of tempLinkDataArray){
-        // if there exists a link from selected in the specified direction
-        if(link['from'] === selectedKey && link['direction'] === direction){
-          existingLink = link
-          myDiagram.model.removeLinkData(link)
-        } else if(link['to'] === selectedKey && link['direction'] === oppositeDirection) {
-          // else if there exists a link to selected in the opposite direction
-          existingLink = link
-          myDiagram.model.removeLinkData(link)
-        }
-      }
-      return existingLink
-    }
-
     const makeArrowButton = (spot, fig) => {
       var maker = function(e, shape) {
           e.handled = true;
@@ -90,6 +109,7 @@ const init = () => {
 
             // make the new node a copy of the selected node
             var nodedata = m.copyNodeData(selnode.data);
+            nodedata['charge'] = 0
             m.addNodeData(nodedata);  // add to model
 
             // move the new node
@@ -123,7 +143,7 @@ const init = () => {
         );
     }
 
-    myDiagram.nodeTemplate.selectionAdornmentTemplate =
+    anionTemplate.selectionAdornmentTemplate =
       $(go.Adornment, "Spot",
         $(go.Placeholder, { padding: 5 }),
         makeArrowButton(go.Spot.Top, "TriangleUp", 'up'),
@@ -132,30 +152,30 @@ const init = () => {
         makeArrowButton(go.Spot.Bottom, "TriangleDown", 'down'),
       );
 
+    // Mapping different link templates for different types of bonds
     const changeBond = (e, link) => {
-        e.diagram.commit(function(diag) {
-            var oldLinkData = link.tb
-            var category;
-            var bondCount = oldLinkData['bondCount']
-            var from = oldLinkData['from']
-            var to = oldLinkData['to']
+      e.diagram.commit(function(diag) {
+          var oldLinkData = link.tb
+          var category;
+          var bondCount = oldLinkData['bondCount']
+          var from = oldLinkData['from']
+          var to = oldLinkData['to']
 
-            if(bondCount === 1){
-                bondCount++
-                category = 'double'
-            } else if (bondCount === 2) {
-                bondCount++
-                category = 'triple'
-            } else {
-                bondCount = 1
-                category = 'single'
-            }
+          if(bondCount === 1){
+              bondCount++
+              category = 'double'
+          } else if (bondCount === 2) {
+              bondCount++
+              category = 'triple'
+          } else {
+              bondCount = 1
+              category = 'single'
+          }
 
-            myDiagram.model.removeLinkData(oldLinkData)
-            var newLinkData = {category: category, bondCount: bondCount, from: from, to: to}
-            myDiagram.model.addLinkData(newLinkData)
-
-        })
+          myDiagram.model.removeLinkData(oldLinkData)
+          var newLinkData = {category: category, bondCount: bondCount, from: from, to: to}
+          myDiagram.model.addLinkData(newLinkData)
+      })
     }
 
     var singleBond = 
@@ -189,78 +209,72 @@ const init = () => {
     linkMap.add('single', singleBond)
     linkMap.add('double', doubleBond)
     linkMap.add('triple', tripleBond)
-
     myDiagram.linkTemplateMap = linkMap
 
+    // Diagram Model
     myDiagram.model =
     $(go.GraphLinksModel,
       {
         copiesArrays: true,
         copiesArrayObjects: true,
-        linkFromPortIdProperty: "fromPort",
-        linkToPortIdProperty: "toPort"
       });
 
+    // Initial C
     myDiagram.model.nodeDataArray = [
       {
+        category: 'anion',
         key: -1,
         loc: "0 0",
         text: "C",
-        ports: [
-        //   { id: "up2", spot: "0.25 0" },
-        //   { id: "up1", spot: "0.5 0" },
-        //   { id: "up3", spot: "0.75 0" },
-        //   // { id: "up4", spot: "1 0" },
-        //   // { id: "up5", spot: "0 0" },
-
-        //   { id: "down2", spot: "0.25 1" },
-        //   { id: "down1", spot: "0.5 1" },
-        //   { id: "down3", spot: "0.75 1" },
-        //   // { id: "down4", spot: "1 1" },
-        //   // { id: "down5", spot: "0 1" },
-          
-        //   { id: "left2", spot: "0 0.35" },
-        //   { id: "left1", spot: "0 0.5" },
-        //   { id: "left3", spot: "0 0.65" },
-        //   // { id: "left4", spot: "0 0.2" },
-        //   // { id: "left5", spot: "0 0.8" },
-
-        //   { id: "right2", spot: "1 0.35" },
-        //   { id: "right1", spot: "1 0.5" },
-        //   { id: "right3", spot: "1 0.65" },
-        //   // { id: "right4", spot: "1 0.2" },
-        //   // { id: "right5", spot: "1 0.8" }
-        ]
+        charge: 0,
       },
     ]
 }
 
-const correspondingDirection = {
-  'left1': 'right1',
-  'left2': 'right2',
-  'left3': 'right3',
+// Ends TextEditingTool when clicking out of myDiagram
+document.addEventListener("mousedown", function() {
+  if(myDiagram.currentTool instanceof go.TextEditingTool){
+    myDiagram.currentTool.acceptText(go.TextEditingTool.LostFocus);
 
-  'right1': 'left1',
-  'right2': 'left2',
-  'right3': 'left3',
-
-  'up1': 'down1',
-  'up2': 'down2',
-  'up3': 'down3',
-
-  'down1': 'up1',
-  'down2': 'up2',
-  'down3': 'up3',
-
-  'up': 'down',
-  'down': 'up',
-  'left': 'right',
-  'right': 'left',
-}
+    // Checking whether text is accepted
+    // console.log(myDiagram.currentTool.state.va)
+  }
+});
 
 const logData = () => {
   console.log('Data')
   console.log(myDiagram.model.nodeDataArray)
   console.log('Links')
   console.log(myDiagram.model.linkDataArray)
+}
+
+const addCation = () => {
+  myDiagram.startTransaction()
+  const cation = { category: 'cation', charge: 1, text: "Cation" }
+  myDiagram.model.addNodeData(cation)
+  myDiagram.commitTransaction('added cation')
+}
+
+const deleteElement = () => {
+  
+}
+
+const checkTotalNumElements = (compound, nodeDataArray) => {
+  const correctNum = answers[compound]['totalNumElements']
+  const currNum = nodeDataArray.length
+  return correctNum === currNum
+}
+
+const check = () => {
+  const nodeDataArray = myDiagram.model.nodeDataArray
+  const linkDataArray = myDiagram.model.linkDataArray
+  console.log(checkTotalNumElements(compound, nodeDataArray))
+}
+
+var compound = 'CH3CH3'
+
+const answers = {
+  'CH3CH3': {
+    totalNumElements: 8,
+  }
 }
