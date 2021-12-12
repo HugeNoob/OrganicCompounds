@@ -6,6 +6,56 @@
 const init = () => {
     var $ = go.GraphObject.make;
 
+    // Shape to indicate a connected cation
+    go.Shape.defineFigureGenerator("ConnectedCation", function(shape, w, h) {
+      var param1 = shape ? shape.parameter1 : NaN;
+      if (isNaN(param1) || param1 < 0) param1 = 8;
+    
+      var quarterCircle = w/4
+      var rad = quarterCircle*2
+      var geo = new go.Geometry();
+
+      var circle = new go.PathFigure(rad*2, h/2, false);
+      circle.add(new go.PathSegment(go.PathSegment.Arc, 0, 360, rad, rad, rad, rad));
+      geo.add(circle);
+
+      var plusVerticalLine = new go.PathFigure(rad, 2)
+      plusVerticalLine.add(new go.PathSegment(go.PathSegment.Line, rad, 2*rad-2))
+      geo.add(plusVerticalLine)
+
+      var plusHorizontalLine = new go.PathFigure(2, rad)
+      plusHorizontalLine.add(new go.PathSegment(go.PathSegment.Line, 2*rad-2, rad))
+      geo.add(plusHorizontalLine)
+
+      return geo;
+    });
+
+    // Shape to indicate a connected anion
+    go.Shape.defineFigureGenerator("ConnectedAnion", function(shape, w, h) {
+      var param1 = shape ? shape.parameter1 : NaN;
+      if (isNaN(param1) || param1 < 0) param1 = 8;
+    
+      var quarterCircle = w/4
+      var rad = quarterCircle*2
+      var geo = new go.Geometry();
+
+      var circle = new go.PathFigure(rad*2, h/2, false);
+      circle.add(new go.PathSegment(go.PathSegment.Arc, 0, 360, rad, rad, rad, rad));
+      geo.add(circle);
+
+      var minusHorizontalLine = new go.PathFigure(2, rad)
+      minusHorizontalLine.add(new go.PathSegment(go.PathSegment.Line, 2*rad-2, rad))
+      geo.add(minusHorizontalLine)
+
+      return geo;
+    });
+
+    // Edited string should only contain string of <=2 letters
+    const validElement = (textblock, oldstr, newstr) => {
+      const lettersOnly = /^[a-zA-Z]+$/.test(newstr);
+      return newstr.length <= 2 && lettersOnly
+    }
+
     myDiagram =
       $(go.Diagram, "myDiagramDiv",
         {
@@ -14,6 +64,7 @@ const init = () => {
           allowLink: false,  // no user-drawn links
           'dragSelectingTool.isEnabled': false,
           allowClipboard: false,
+          draggingTool: new SnappingTool(),
         });
 
     const changeCharge = (e, node) => {
@@ -38,30 +89,45 @@ const init = () => {
     var nodeMap = new go.Map();
     // Generic node template for both cations and anions to be inherited/copied
     var elementTemplate =
-      $(go.Node, "Spot",
+      $(go.Node, "Auto",
         {
           locationObjectName: "SHAPE",
           locationSpot: go.Spot.Center, 
-          resizable: false,
-          doubleClick: changeCharge
+          doubleClick: changeCharge,
+          itemTemplate:
+          // each port is a Circle whose alignment spot and port ID are given by the item data
+            $(go.Panel,
+              new go.Binding("portId", "id"),
+              new go.Binding("alignment", "spot", go.Spot.parse),
+              $(go.Shape, "Circle",
+                { width: 2, height: 2, fill: 'transparent', stroke: null },
+                new go.Binding('fill', 'fill')
+                ),
+            ),
+          height: 40,
+          width: 55
         },
-        // these Bindings are TwoWay because the DraggingTool modifies the target properties
+        new go.Binding("itemArray", "ports"),
         new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
-        $(go.TextBlock,
+        $(go.Panel, 'Spot',
           {
-            margin: 2, 
-            textAlign: "center",
-            editable: true, 
-            isMultiline: false,
-            font: "32px Fira Sans, sans-serif",
           },
-          // this Binding is TwoWay due to the user editing the text with the TextEditingTool
-          new go.Binding("text").makeTwoWay()),
+          $(go.TextBlock,
+            {
+              textAlign: "center",
+              editable: true, 
+              isMultiline: false,
+              verticalAlignment: go.Spot.Center,
+              font: "32px Fira Sans, sans-serif",
+              textValidation: validElement
+            },
+            // this Binding is TwoWay due to the user editing the text with the TextEditingTool
+            new go.Binding("text").makeTwoWay()),
           $(go.Shape,
             {
-              height: 10,
-              width: 10,
-              alignment: go.Spot.TopRight,
+              height: 8,
+              width: 8,
+              alignment: new go.Spot(0.9, 0),
               figure: 'PlusLine',
               stroke: 'black',
             },
@@ -73,7 +139,8 @@ const init = () => {
               }
             }),
             new go.Binding("stroke", "charge", function(c) { return c === 0 ? 'white' : 'black'; })
-            )
+        )
+        )
       );
 
     elementTemplate.data = {};
@@ -205,10 +272,14 @@ const init = () => {
         $(go.Shape, { isPanelMain: true, strokeWidth: 2, stroke: "black" })
     );
     
+    var ionicBond = $(go.Link, { visible: false });
+    
+
     var linkMap = new go.Map()
     linkMap.add('single', singleBond)
     linkMap.add('double', doubleBond)
     linkMap.add('triple', tripleBond)
+    linkMap.add('', ionicBond)
     myDiagram.linkTemplateMap = linkMap
 
     // Diagram Model
@@ -227,6 +298,10 @@ const init = () => {
         loc: "0 0",
         text: "C",
         charge: 0,
+        ports: [
+          { id: "left", spot: "0 0.5" },
+          { id: "right", spot: "1 0.5" },
+        ]
       },
     ]
 }
@@ -250,7 +325,15 @@ const logData = () => {
 
 const addCation = () => {
   myDiagram.startTransaction()
-  const cation = { category: 'cation', charge: 1, text: "Cation" }
+  const cation = { 
+    category: 'cation', 
+    charge: 1, 
+    text: "ion",
+    ports: [
+      { id: "left", spot: "0 0.5" },
+      { id: "right", spot: "1 0.5" },
+    ]
+  }
   myDiagram.model.addNodeData(cation)
   myDiagram.commitTransaction('added cation')
 }
@@ -278,3 +361,203 @@ const answers = {
     totalNumElements: 8,
   }
 }
+
+// Define a custom DraggingTool
+function SnappingTool() {
+  go.DraggingTool.call(this);
+}
+go.Diagram.inherit(SnappingTool, go.DraggingTool);
+
+// This predicate checks to see if the ports can snap together.
+SnappingTool.prototype.compatiblePorts = function(p1, p2) {
+  // already connected?
+  var part1 = p1.part;
+  var id1 = p1.portId;
+  if (id1 === null || id1 === "") return false;
+  if (part1.findLinksConnected(id1).filter(function(l) { return l.category === ""; }).count > 0) return false;
+  var part2 = p2.part;
+  var id2 = p2.portId;
+  if (id2 === null || id2 === "") return false;
+  if (part2.findLinksConnected(id2).filter(function(l) { return l.category === ""; }).count > 0) return false;
+  return true
+};
+
+// Override this method to find the offset such that a moving port can
+// be snapped to be coincident with a compatible stationary port,
+// then move all of the parts by that offset.
+SnappingTool.prototype.moveParts = function(parts, offset, check) {
+  // when moving an actually copied collection of Parts, use the offset that was calculated during the drag
+  if (this._snapOffset && this.isActive && this.diagram.lastInput.up && parts === this.copiedParts) {
+    go.DraggingTool.prototype.moveParts.call(this, parts, this._snapOffset, check);
+    this._snapOffset = undefined;
+    return;
+  }
+
+  var commonOffset = offset;
+
+  // find out if any snapping is desired for any Node being dragged
+  var sit = parts.iterator;
+  while (sit.next()) {
+    var node = sit.key;
+    if (!(node instanceof go.Node)) continue;
+    var info = sit.value;
+    var newloc = info.point.copy().add(offset);
+
+    // now calculate snap point for this Node
+    var snapoffset = newloc.copy().subtract(node.location);
+    var nearbyports = null;
+    var closestDistance = 20 * 20;  // don't bother taking sqrt
+    var closestPort = null;
+    var closestPortPt = null;
+    var nodePort = null;
+    var mit = node.ports;
+    while (mit.next()) {
+      var port = mit.value;
+      if (node.findLinksConnected(port.portId).filter(function(l) { return l.category === ""; }).count > 0) continue;
+      var portPt = port.getDocumentPoint(go.Spot.Center);
+      portPt.add(snapoffset);  // where it would be without snapping
+
+      if (nearbyports === null) {
+        // this collects the Nodes that intersect with the NODE's bounds,
+        // excluding nodes that are being dragged (i.e. in the PARTS collection)
+        var nearbyparts = this.diagram.findObjectsIn(node.actualBounds,
+          function(x) { return x.part; },
+          function(p) { return !parts.has(p); },
+          true);
+
+        // gather a collection of GraphObjects that are stationary "ports" for this NODE
+        nearbyports = new go.Set(/*go.GraphObject*/);
+        nearbyparts.each(function(n) {
+          if (n instanceof go.Node) {
+            nearbyports.addAll(n.ports);
+          }
+        });
+      }
+
+      var pit = nearbyports.iterator;
+      while (pit.next()) {
+        var p = pit.value;
+        if (!this.compatiblePorts(port, p)) continue;
+        var ppt = p.getDocumentPoint(go.Spot.Center);
+        var d = ppt.distanceSquaredPoint(portPt);
+        if (d < closestDistance) {
+          closestDistance = d;
+          closestPort = p;
+          closestPortPt = ppt;
+          nodePort = port;
+        }
+      }
+    }
+
+    // found something to snap to!
+    if (closestPort !== null) {
+      // move the node so that the compatible ports coincide
+      var noderelpt = nodePort.getDocumentPoint(go.Spot.Center).subtract(node.location);
+      var snappt = closestPortPt.copy().subtract(noderelpt);
+      // save the offset, to ensure everything moves together
+      commonOffset = snappt.subtract(newloc).add(offset);
+      // ignore any node.dragComputation function
+      // ignore any node.minLocation and node.maxLocation
+      break;
+    }
+  }
+
+  // now do the standard movement with the single (perhaps snapped) offset
+  this._snapOffset = commonOffset.copy();  // remember for mouse-up when copying
+  go.DraggingTool.prototype.moveParts.call(this, parts, commonOffset, check);
+};
+
+// Establish links between snapped ports,
+// and remove obsolete links because their ports are no longer coincident.
+SnappingTool.prototype.doDropOnto = function(pt, obj) {
+  go.DraggingTool.prototype.doDropOnto.call(this, pt, obj);
+  var tool = this;
+  // Need to iterate over all of the dropped nodes to see which ports happen to be snapped to stationary ports
+  var coll = this.copiedParts || this.draggedParts;
+  var it = coll.iterator;
+  while (it.next()) {
+    var node = it.key;
+    if (!(node instanceof go.Node)) continue;
+    // connect all snapped ports of this NODE (yes, there might be more than one) with links
+    var pit = node.ports;
+    while (pit.next()) {
+      var port = pit.value;
+      // maybe add a link -- see if the port is at another port that is compatible
+      var portPt = port.getDocumentPoint(go.Spot.Center);
+      if (!portPt.isReal()) continue;
+      var nearbyports =
+        this.diagram.findObjectsAt(portPt,
+          function(x) {  // some GraphObject at portPt
+            var o = x;
+            // walk up the chain of panels
+            while (o !== null && o.portId === null) o = o.panel;
+            return o;
+          },
+          function(p) {  // a "port" Panel
+            // the parent Node must not be in the dragged collection, and
+            // this port P must be compatible with the NODE's PORT
+            if (coll.has(p.part)) return false;
+            var ppt = p.getDocumentPoint(go.Spot.Center);
+            if (portPt.distanceSquaredPoint(ppt) >= 0.25) return false;
+            return tool.compatiblePorts(port, p);
+          });
+      // did we find a compatible port?
+      var np = nearbyports.first();
+      if (np !== null) {
+        // connect the NODE's PORT with the other port found at the same point
+        this.diagram.toolManager.linkingTool.insertLink(node, port, np.part, np);
+      }
+    }
+  }
+};
+
+// Just move selected nodes when SHIFT moving, causing nodes to be unsnapped.
+// When SHIFTing, must disconnect all links that connect with nodes not being dragged.
+// Without SHIFT, move all nodes that are snapped to selected nodes, even indirectly.
+SnappingTool.prototype.computeEffectiveCollection = function(parts) {
+  myDiagram.startTransaction()
+  if (this.diagram.lastInput.shift) {
+    var links = new go.Set(/*go.Link*/);
+    var coll = go.DraggingTool.prototype.computeEffectiveCollection.call(this, parts);
+    coll.iteratorKeys.each(function(node) {
+      // disconnect all links of this node that connect with stationary node
+      if (!(node instanceof go.Node)) return;
+      node.findLinksConnected().each(function(link) {
+        if (link.category !== "") return;
+        // see if this link connects with a node that is being dragged
+        var othernode = link.getOtherNode(node);
+        if (othernode !== null && !coll.has(othernode)) {
+          links.add(link);  // remember for later deletion
+        }
+      });
+    });
+    // outside of nested loops we can actually delete the links
+    links.each(function(l) { l.diagram.remove(l); });
+    myDiagram.commitTransaction()
+    return coll;
+  } else {
+    var map = new go.Map(/*go.Part, Object*/);
+    if (parts === null) return map;
+    var tool = this;
+    parts.iterator.each(function(n) {
+      tool.gatherConnecteds(map, n);
+    });
+    myDiagram.commitTransaction()
+    return map;
+  }
+};
+
+// Find other attached nodes.
+SnappingTool.prototype.gatherConnecteds = function(map, node) {
+  if (!(node instanceof go.Node)) return;
+  if (map.has(node)) return;
+  // record the original Node location, for relative positioning and for cancellation
+  map.add(node, new go.DraggingInfo(node.location));
+  // now recursively collect all connected Nodes and the Links to them
+  var tool = this;
+  node.findLinksConnected().each(function(link) {
+    if (link.category !== "") return;  // ignore comment links
+    map.add(link, new go.DraggingInfo());
+    tool.gatherConnecteds(map, link.getOtherNode(node));
+  });
+};
