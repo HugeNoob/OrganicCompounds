@@ -159,6 +159,7 @@ const init = () => {
               figure: 'PlusLine',
               stroke: 'black',
             },
+            new go.Binding("background", "isSelected", function(s) { return s ? "#00FFFF" : "transparent"; }).ofObject(),
             new go.Binding('figure', '', function(node){
               if(node.charge === 1){
                 return node.ionicBonded === true ? 'ConnectedCation' : 'PlusLine'
