@@ -346,6 +346,8 @@ document.addEventListener("mousedown", function() {
   }
 });
 
+var selected = null;
+
 const logData = () => {
   console.log('Data')
   console.log(myDiagram.model.nodeDataArray)
@@ -371,7 +373,14 @@ const addIon = () => {
 }
 
 const deleteElement = () => {
-  
+    selected = myDiagram.selection.first() !== null ? myDiagram.selection.first().tb : null
+    if(selected === null || selected.key === -1 ){ return }
+    var node = myDiagram.findNodeForKey(selected.key);
+    if (node !== null) {
+      myDiagram.startTransaction();
+      myDiagram.remove(node);
+      myDiagram.commitTransaction("deleted node");
+    }
 }
 
 const checkTotalNumElements = (compound, nodeDataArray) => {
