@@ -72,28 +72,33 @@ const init = () => {
         var nodeData = node.tb
         myDiagram.model.removeNodeData(nodeData)
         var charge = nodeData['charge']
+        var elementType;
 
         if(charge === 0){
           charge = 1
+          elementType = 'ion'
         } else if (charge === 1) {
           charge = -1
+          elementType = 'ion'
         } else {
           charge = 0
+          elementType = 'element'
         }
 
-        var newNodeData = {...nodeData, charge: charge}
+        var newNodeData = {...nodeData, charge: charge, elementType: elementType}
         myDiagram.model.addNodeData(newNodeData)
       })
     }
 
     var nodeMap = new go.Map();
-    // Generic node template for both cations and anions to be inherited/copied
+    // Generic node template for both cations and organic structure to be inherited/copied
     var elementTemplate =
-      $(go.Node, "Auto",
+      $(go.Node, "Spot",
         {
           locationObjectName: "SHAPE",
           locationSpot: go.Spot.Center, 
           doubleClick: changeCharge,
+          minSize: new go.Size(30, 30),
           itemTemplate:
           // each port is a Circle whose alignment spot and port ID are given by the item data
             $(go.Panel,
@@ -104,22 +109,45 @@ const init = () => {
                 new go.Binding('fill', 'fill')
                 ),
             ),
-          height: 40,
-          width: 55
+          linkConnected: function(node, link, port) {
+            var ports = node.ports
+
+            if (link.category === "ionic"){
+              myDiagram.startTransaction();
+              while(ports.next()){
+                var curr = ports.value.data
+                myDiagram.model.set(curr, 'nodeLinked', true)
+              }
+              myDiagram.model.set(node.data, 'ionicBonded', true)
+              myDiagram.commitTransaction()
+            }
+          },
+          linkDisconnected: function(node, link, port) {
+            var ports = node.ports
+
+            if (link.category === "ionic"){
+              myDiagram.startTransaction();
+              while(ports.next()){
+                var curr = ports.value.data
+                myDiagram.model.set(curr, 'nodeLinked', false)
+              }
+              myDiagram.model.set(node.data, 'ionicBonded', false)
+              myDiagram.commitTransaction()
+            }
+          },
         },
         new go.Binding("itemArray", "ports"),
         new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
         $(go.Panel, 'Spot',
-          {
-          },
           $(go.TextBlock,
             {
               textAlign: "center",
+              maxLines: 1,
               editable: true, 
               isMultiline: false,
               verticalAlignment: go.Spot.Center,
               font: "32px Fira Sans, sans-serif",
-              textValidation: validElement
+              textValidation: validElement,
             },
             // this Binding is TwoWay due to the user editing the text with the TextEditingTool
             new go.Binding("text").makeTwoWay()),
@@ -131,30 +159,31 @@ const init = () => {
               figure: 'PlusLine',
               stroke: 'black',
             },
-            new go.Binding('figure', 'charge', function(c){
-              if(c === 1){
-                return 'PlusLine'
+            new go.Binding('figure', '', function(node){
+              if(node.charge === 1){
+                return node.ionicBonded === true ? 'ConnectedCation' : 'PlusLine'
               } else {
-                return 'MinusLine'
+                return node.ionicBonded === true ? 'ConnectedAnion' : 'MinusLine'
               }
-            }),
-            new go.Binding("stroke", "charge", function(c) { return c === 0 ? 'white' : 'black'; })
+0            }).makeTwoWay(),
+            new go.Binding("stroke", "charge", function(c) { return c === 0 ? 'transparent' : 'black'; })
         )
         )
       );
 
+    // Allowing for copying
     elementTemplate.data = {};
     elementTemplate.data = null;
 
     var cationTemplate = elementTemplate.copy()
     nodeMap.add('cation', cationTemplate);
 
-    var anionTemplate = elementTemplate.copy()
-    nodeMap.add('anion', anionTemplate);
+    var organicTemplate = elementTemplate.copy()
+    nodeMap.add('organic', organicTemplate);
     
     myDiagram.nodeTemplateMap = nodeMap
 
-    // Node selection adornment for anion template ONLY
+    // Node selection adornment for organic element template ONLY
     // Include four large triangular buttons so that the user can easily make a copy
     // of the node, move it to be in that direction relative to the original node,
     // and add a link to the new node.
@@ -210,7 +239,7 @@ const init = () => {
         );
     }
 
-    anionTemplate.selectionAdornmentTemplate =
+    organicTemplate.selectionAdornmentTemplate =
       $(go.Adornment, "Spot",
         $(go.Placeholder, { padding: 5 }),
         makeArrowButton(go.Spot.Top, "TriangleUp", 'up'),
@@ -279,7 +308,7 @@ const init = () => {
     linkMap.add('single', singleBond)
     linkMap.add('double', doubleBond)
     linkMap.add('triple', tripleBond)
-    linkMap.add('', ionicBond)
+    linkMap.add('ionic', ionicBond)
     myDiagram.linkTemplateMap = linkMap
 
     // Diagram Model
@@ -293,15 +322,15 @@ const init = () => {
     // Initial C
     myDiagram.model.nodeDataArray = [
       {
-        category: 'anion',
-        key: -1,
-        loc: "0 0",
+        category: 'organic',
+        elementType: 'element',
         text: "C",
         charge: 0,
         ports: [
-          { id: "left", spot: "0 0.5" },
-          { id: "right", spot: "1 0.5" },
-        ]
+          { id: "left", type: 'organic', spot: "0 0.5", nodeLinked: false },
+          { id: "right", type: 'organic', spot: "1 0.5", nodeLinked: false },
+        ],
+        ionicBonded: false,
       },
     ]
 }
@@ -323,16 +352,18 @@ const logData = () => {
   console.log(myDiagram.model.linkDataArray)
 }
 
-const addCation = () => {
+const addIon = () => {
   myDiagram.startTransaction()
   const cation = { 
-    category: 'cation', 
-    charge: 1, 
+    category: 'cation',
+    elementType: 'ion',
     text: "ion",
+    charge: 1, 
     ports: [
-      { id: "left", spot: "0 0.5" },
-      { id: "right", spot: "1 0.5" },
-    ]
+      { id: "left", type: 'inorganic', spot: "0 0.5", nodeLinked: false },
+      { id: "right", type:'inorganic', spot: "1 0.5", nodeLinked: false },
+    ],
+    ionicBonded: false
   }
   myDiagram.model.addNodeData(cation)
   myDiagram.commitTransaction('added cation')
@@ -373,12 +404,21 @@ SnappingTool.prototype.compatiblePorts = function(p1, p2) {
   // already connected?
   var part1 = p1.part;
   var id1 = p1.portId;
-  if (id1 === null || id1 === "") return false;
+  var nodeLinked1 = p1.data.nodeLinked;
+  if (id1 === null || id1 === "" || nodeLinked1 === true ) return false;
   if (part1.findLinksConnected(id1).filter(function(l) { return l.category === ""; }).count > 0) return false;
+  
   var part2 = p2.part;
   var id2 = p2.portId;
-  if (id2 === null || id2 === "") return false;
+  var nodeLinked2 = p2.data.nodeLinked;
+  if (id2 === null || id2 === "" || nodeLinked2 === true ) return false;
   if (part2.findLinksConnected(id2).filter(function(l) { return l.category === ""; }).count > 0) return false;
+  
+  var type1 = p1.data.type;
+  var type2 = p2.data.type;
+  if ((type1 === 'organic' && type2 === 'organic') || (type1 === 'inorganic' && type2 === 'inorganic')) { return false }
+  if ((id1 === 'left' && id2 === 'left') || (id1 === 'right' && id2 === 'right')) { return false }
+  
   return true
 };
 
@@ -505,7 +545,8 @@ SnappingTool.prototype.doDropOnto = function(pt, obj) {
       var np = nearbyports.first();
       if (np !== null) {
         // connect the NODE's PORT with the other port found at the same point
-        this.diagram.toolManager.linkingTool.insertLink(node, port, np.part, np);
+        var link = { category: 'ionic', bondCount: 1, from: node.key, to: np.part.key}
+        myDiagram.model.addLinkData(link)
       }
     }
   }
@@ -523,7 +564,7 @@ SnappingTool.prototype.computeEffectiveCollection = function(parts) {
       // disconnect all links of this node that connect with stationary node
       if (!(node instanceof go.Node)) return;
       node.findLinksConnected().each(function(link) {
-        if (link.category !== "") return;
+        if (link.category !== "ionic") return;
         // see if this link connects with a node that is being dragged
         var othernode = link.getOtherNode(node);
         if (othernode !== null && !coll.has(othernode)) {
@@ -556,7 +597,7 @@ SnappingTool.prototype.gatherConnecteds = function(map, node) {
   // now recursively collect all connected Nodes and the Links to them
   var tool = this;
   node.findLinksConnected().each(function(link) {
-    if (link.category !== "") return;  // ignore comment links
+    if (link.category !== "ionic") return;  // ignore comment links
     map.add(link, new go.DraggingInfo());
     tool.gatherConnecteds(map, link.getOtherNode(node));
   });
