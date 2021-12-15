@@ -63,6 +63,7 @@ const init = () => {
           maxSelectionCount: 1,
           allowLink: false,  // no user-drawn links
           'dragSelectingTool.isEnabled': false,
+          'contextMenuTool.isEnabled': false,
           allowClipboard: false,
           draggingTool: new SnappingTool(),
         });
@@ -142,7 +143,6 @@ const init = () => {
           $(go.TextBlock,
             {
               textAlign: "center",
-              maxLines: 1,
               editable: true, 
               isMultiline: false,
               verticalAlignment: go.Spot.Center,
@@ -279,6 +279,7 @@ const init = () => {
         $(go.Link,
             {
                 click: changeBond,
+                selectable: false
             },
         $(go.Shape, { isPanelMain: true, strokeWidth: 2, stroke: "black" }),
     );
@@ -287,6 +288,7 @@ const init = () => {
         $(go.Link,
             {
                 click: changeBond,
+                selectable: false
             },
         $(go.Shape, { isPanelMain: true, strokeWidth: 8, stroke: "black" }),
         $(go.Shape, { isPanelMain: true, strokeWidth: 4, stroke: "white" }),
@@ -296,6 +298,7 @@ const init = () => {
         $(go.Link,
             {
                 click: changeBond,
+                selectable: false
             },
         $(go.Shape, { isPanelMain: true, strokeWidth: 10, stroke: "black" }),
         $(go.Shape, { isPanelMain: true, strokeWidth: 6, stroke: "white" }),
@@ -303,7 +306,6 @@ const init = () => {
     );
     
     var ionicBond = $(go.Link, { visible: false });
-    
 
     var linkMap = new go.Map()
     linkMap.add('single', singleBond)
@@ -334,6 +336,8 @@ const init = () => {
         ionicBonded: false,
       },
     ]
+
+    setCompound('Methane')
 }
 
 // Ends TextEditingTool when clicking out of myDiagram
@@ -346,8 +350,8 @@ document.addEventListener("mousedown", function() {
   }
 });
 
-var selected = null;
 
+// Helper functions
 const logData = () => {
   console.log('Data')
   console.log(myDiagram.model.nodeDataArray)
@@ -372,6 +376,7 @@ const addIon = () => {
   myDiagram.commitTransaction('added cation')
 }
 
+var selected = null;
 const deleteElement = () => {
     selected = myDiagram.selection.first() !== null ? myDiagram.selection.first().tb : null
     if(selected === null || selected.key === -1 ){ return }
@@ -383,27 +388,644 @@ const deleteElement = () => {
     }
 }
 
-const checkTotalNumElements = (compound, nodeDataArray) => {
-  const correctNum = answers[compound]['totalNumElements']
-  const currNum = nodeDataArray.length
-  return correctNum === currNum
+// Helper functions
+const setCompound = (x) => {
+  compound = x
+  // Update diagram data
+  myDiagram.startTransaction()
+  myDiagram.model.nodeDataArray = []
+  myDiagram.model.linkDataArray = []
+  // set initial C
+  myDiagram.model.nodeDataArray = [
+    {
+      category: 'organic',
+      elementType: 'element',
+      text: "C",
+      charge: 0,
+      ports: [
+        { id: "left", type: 'organic', spot: "0 0.5", nodeLinked: false },
+        { id: "right", type: 'organic', spot: "1 0.5", nodeLinked: false },
+      ],
+      ionicBonded: false,
+    },
+  ]
+  myDiagram.commitTransaction()
+
+  // Update covers
+  covers = document.getElementsByClassName('compoundName')
+  for(let i of covers){
+    i.innerText = x
+  }
+
+  // Update result string
+  updateResult('Check answer to see your results.')
 }
 
-const check = () => {
-  const nodeDataArray = myDiagram.model.nodeDataArray
-  const linkDataArray = myDiagram.model.linkDataArray
-  console.log(checkTotalNumElements(compound, nodeDataArray))
-}
-
-var compound = 'CH3CH3'
-
-const answers = {
-  'CH3CH3': {
-    totalNumElements: 8,
+const updateResult = (result) => {
+  document.getElementById('results').innerText = result
+  if(result === 'Your answer is correct.'){
+    document.getElementById('results').style.color = 'green'
+  } else if(result === 'Check answer to see your results.') {
+    document.getElementById('results').style.color = 'black'
+  } else {
+    document.getElementById('results').style.color = 'red'
   }
 }
 
-// Define a custom DraggingTool
+
+
+
+
+// Checking functions
+
+var compound = '2-methylbutane'
+
+const answers = {
+  // CH4
+  'Methane': {
+    numElements: 5,
+    data: [
+      {
+        carbonIndex: 0,
+        charge: 0,
+        bondedTo: [
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+        ]
+      },
+    ],
+  },
+
+  // CH3CH3
+  'Ethane': {
+    numElements: 8,
+    data: [
+      {
+        carbonIndex: 0,
+        charge: 0,
+        bondedTo: [
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+        ]
+      },
+      {
+        carbonIndex: 1,
+        charge: 0,
+        bondedTo: [
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+        ]
+      }
+    ],
+  },
+
+  // CH3COOH
+  'Ethanoic acid': {
+    numElements: 8,
+    data: [
+      {
+        carbonIndex: 0, 
+        charge: 0,
+        bondedTo: [
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+        ],
+      },
+      {
+        carbonIndex: 1,
+        charge: 0,
+        bondedTo: [
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'O', bondType: 'double', charge: 0, isLeaf: true},
+          {element: 'O', bondType: 'single', charge: 0, isLeaf: false, 
+            bondedTo: [
+              {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+              {element: 'H', bondType: 'single', charge: 0, isLeaf: true}
+            ]
+          },
+        ]
+      }
+    ],
+  },
+  
+  // CH3CH2CH(CH3)2
+  '2-methylbutane': {
+    numElements: 17,
+    data: [
+      {
+        carbonIndex: 0, 
+        charge: 0,
+        bondedTo: [
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+        ],
+      },
+      {
+        carbonIndex: 1, 
+        charge: 0,
+        bondedTo: [
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: false,
+            bondedTo: [
+              {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+              {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+              {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+              {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+            ]
+          },
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+        ],
+      },
+      {
+        carbonIndex: 2, 
+        charge: 0,
+        bondedTo: [
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+        ],
+      },
+      {
+        carbonIndex: 3, 
+        charge: 0,
+        bondedTo: [
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+        ],
+      },
+    ]
+  },
+
+  '1-chloro-2-methylpropane': {
+    numElements: 14,
+    data: [
+      {
+        carbonIndex: 0,
+        charge: 0,
+        bondedTo: [
+          {element: 'Cl', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+        ]
+      },
+      {
+        carbonIndex: 1,
+        charge: 0,
+        bondedTo: [
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: false,
+            bondedTo: [
+              {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+              {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+              {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+              {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+            ]
+          },
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+        ]
+      },
+      {
+        carbonIndex: 2,
+        charge: 0,
+        bondedTo: [
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+        ]
+      },
+    ]
+  },
+
+  'Sodium Ethanoate': {
+    numElements: 8,
+    data: [
+      {
+        carbonIndex: 0,
+        charge: 0,
+        bondedTo: [
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+        ]
+      },
+      {
+        carbonIndex: 1,
+        charge: 0,
+        bondedTo: [
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'O', bondType: 'double', charge: 0, isLeaf: true},
+          {element: 'O', bondType: 'single', charge: -1, isLeaf: false,
+            bondedTo: [
+              {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+              {element: 'Na', bondType: 'ionic', charge: 1, isLeaf: true},
+            ]
+          },
+        ]
+      },
+    ]
+  },
+
+  'Ethyl Ethanoate': {
+    numElements: 14,
+    data: [
+      {
+        carbonIndex: 0,
+        charge: 0,
+        bondedTo: [
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+        ]
+      },
+      {
+        carbonIndex: 1,
+        charge: 0,
+        bondedTo: [
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'O', bondType: 'double', charge: 0, isLeaf: true},
+          {element: 'O', bondType: 'single', charge: 0, isLeaf: false,
+            bondedTo: [
+              {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+              {element: 'C', bondType: 'single', charge: 0, isMainChain: false,
+                bondedTo: [
+                  {element: 'O', bondType: 'single', charge: 0, isLeaf: true},
+                  {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+                  {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+                  {element: 'C', bondType: 'single', charge: 0, isMainChain: false,
+                    bondedTo: [
+                      {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+                      {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+                      {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+                      {element: 'C', bondType: 'single', charge: 0, isLeaf: true},
+                    ]
+                  },
+                ]
+              },
+            ]
+          },
+        ]
+      },
+    ]
+  }
+  
+}
+
+const findAllCarbonKeys = () => {
+  var carbonKeys = []
+  var carbonProfile = {}
+
+  for(let element of myDiagram.model.nodeDataArray){
+    if(element.text === 'C'){
+      carbonKeys.push(element.key)
+      carbonProfile[element.key] = []
+    }
+  }
+  return [carbonKeys, carbonProfile]
+}
+
+const createCarbonProfile = () => {
+  var [carbonKeys, carbonProfile] = findAllCarbonKeys()
+  var links = myDiagram.model.linkDataArray
+
+  for(let link of links){
+    if(carbonKeys.indexOf(link.to) !== -1 && carbonKeys.indexOf(link.from) !== -1){
+      carbonProfile[link.to].push(link.from)
+      carbonProfile[link.from].push(link.to)
+    }
+  }
+  return carbonProfile
+}
+
+const parseNodeData = () => {
+  var carbonKeys = []       // list of keys of all carbons
+  var carbonProfile = {}    // Maps carbon to linked carbons
+  var nodeProfile = {}      // Maps each node to linked nodes
+  var elementNameMap = {}   // Maps keys to element names
+  var chargeMap = {}        // Maps keys to element charges
+
+  for(let element of myDiagram.model.nodeDataArray){
+    nodeProfile[element.key] = []
+    elementNameMap[element.key] = element.text
+    chargeMap[element.key] = element.charge
+    if(element.text === 'C'){
+      carbonKeys.push(element.key)
+      carbonProfile[element.key] = []
+    }
+  }
+  return [carbonKeys, carbonProfile, nodeProfile, elementNameMap, chargeMap]
+}
+
+const parseLinkData = () => {
+  var [carbonKeys, carbonProfile, nodeProfile, elementNameMap, chargeMap] = parseNodeData()
+  var links = myDiagram.model.linkDataArray
+
+  for(let link of links){
+    nodeProfile[link.to].push([link.from, link.category])
+    nodeProfile[link.from].push([link.to, link.category])
+
+    if(carbonKeys.indexOf(link.to) !== -1 && carbonKeys.indexOf(link.from) !== -1){
+      carbonProfile[link.to].push(link.from)
+      carbonProfile[link.from].push(link.to)
+    }
+  }
+  return [carbonKeys, carbonProfile, nodeProfile, elementNameMap, chargeMap]
+}
+
+const getCarbonLeaf = (carbonProfile) => {
+  var carbonLeaf = null;
+  
+  if(Object.keys(carbonProfile).length === 1){
+    return -1
+  }
+  for (let c in carbonProfile){
+    carbonLeaf = carbonProfile[c].length === 1 ? c : null
+    if (carbonLeaf !== null){
+      return carbonLeaf
+    }
+  }
+  return carbonLeaf
+}
+
+// TECHNICALLY, second and third cases are only present to improve efficiency but are not needed
+// ... actually they don't really improve much either 
+const getLongestCarbonChains = (parent, curr, path, carbonProfile) => {
+
+  var branches = [ ...carbonProfile[curr]]
+  
+  // End leaf case
+  if (branches[0] == parent && branches.length == 1) {
+      return [path]
+  } 
+
+  // First leaf movement case
+  else if (branches.indexOf(parent) == -1 && branches.length == 1) {
+      // console.log('IM HERE')
+      return getLongestCarbonChains(curr, branches[0], path.concat([branches[0]]), carbonProfile)
+  }
+
+  // C between 2 Cs case
+  else if (branches.indexOf(parent) != -1 && branches.length == 2) {
+      branches.splice(branches.indexOf(parent), 1)
+      return getLongestCarbonChains(curr, branches[0], path.concat([branches[0]]), carbonProfile)
+  } 
+  
+  // Branch case (>2 Cs bonded)
+  else {
+      var currLongestLength = 0
+      for (let b of branches) {
+          if (b != parent) {
+              var tempPath = [b]
+              var possiblePaths = getLongestCarbonChains(curr, b, tempPath, carbonProfile)
+              // possiblePaths will be a list of longest paths -- an array of arrays
+    
+              if (possiblePaths[0].length > currLongestLength) {
+                currLongestLength = possiblePaths[0].length
+                if(possiblePaths.length === 1){
+                    var longestPaths = []
+                    longestPaths.push(possiblePaths[0])
+                } else {
+                    var longestPaths = []
+                    for(let path of possiblePaths){
+                        longestPaths.push(path)
+                    }
+                }
+              } else if (possiblePaths[0].length == currLongestLength) {
+                  if(possiblePaths.length === 1){
+                      longestPaths.push(possiblePaths[0])
+                  } else {
+                      for(let path of possiblePaths){
+                          longestPaths.push(path)
+                      }
+                  }
+              }
+          }
+      }
+      var finalPaths = []
+      for(let longPath of longestPaths){
+        finalPaths.push(path.concat(longPath))
+      }
+      return finalPaths
+  }
+}
+
+// recursive function that checks a node's bonds by comparing it to the answer's list of correct ones
+const check = (currNodeKey, ansCharge, ansBondedTo, longestCarbonChain, nodeProfile, elementNameMap, chargeMap) => {
+  var ansBonds = [...ansBondedTo]
+  var currNodeBonds = nodeProfile[currNodeKey]
+
+  // checking for overall number of bonds 
+  if(ansBonds.length !== currNodeBonds.length) { 
+    // console.log('NUMBER OF BONDS TO THIS NODE IS WRONG')
+    return false 
+  }
+
+  // check own charge
+  if(chargeMap[currNodeKey] !== ansCharge){
+    // console.log('THIS NODE HAS WRONG CHARGE')
+    return false
+  }
+
+  // for each bond on this input node
+  for(let bond of currNodeBonds){
+    var elementName = elementNameMap[bond[0]]
+    var bondType = bond[1]
+    var elementCharge = chargeMap[bond[0]]
+    var isLeaf = nodeProfile[bond[0]].length === 1 ? true : false
+
+    // console.log('-------------------------------------------------')
+    // console.log('elementName')
+    // console.log(elementName)
+    // console.log('elementCharge')
+    // console.log(elementCharge)
+    // console.log('bondType')
+    // console.log(bondType)
+    // console.log('isLeaf')
+    // console.log(isLeaf)
+
+    // look for matching answer bond
+    var currBondCorrect = false;
+    for (ansBond of ansBonds) {
+      // get the index of this ans bond for later use 
+      // (otherwise may be reassigned later in recursion which leads to incorrect deletion)
+      var index = ansBonds.indexOf(ansBond)
+
+      // If first few params are matching
+      if (ansBond.element === elementName && ansBond.bondType === bondType && ansBond.charge == elementCharge){
+        
+        // if element is C
+        if (elementName === 'C'){
+          var isMainChain = longestCarbonChain.indexOf(bond[0]) != -1 ? true : false
+          
+          // If isMainChain value matches
+          if (isMainChain === ansBond.isMainChain){
+
+            // If this C is part of main chain
+            if (isMainChain){
+              currBondCorrect = true
+              ansBonds.splice(index, 1)
+            } 
+            // if C is not part of main chain, recurse into the chain
+            else {
+              var reverseSequence = [...ansBondedTo].reverse()
+              var subChainCorrect1 = check(bond[0], ansBond.charge, [...ansBond.bondedTo], longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
+              var subChainCorrect2 = check(bond[0], ansBond.charge, reverseSequence, longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
+              
+              // if the subchain is correct, congrats
+              if (subChainCorrect1 || subChainCorrect2){
+                currBondCorrect = true
+                ansBonds.splice(index, 1)
+              }
+            }
+          }
+        }
+        // else if not C
+        else {
+          // if isLeaf value matches
+          if (isLeaf === ansBond.isLeaf){
+            
+            // if this element is leaf
+            if (isLeaf){
+              currBondCorrect = true
+              var index = ansBonds.indexOf(ansBond)
+              ansBonds.splice(index, 1)
+            }
+            // else if this element is not leaf, recurse into chain
+            else {
+              var subChainCorrect = check(bond[0], ansBond.charge, [...ansBond.bondedTo], longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
+              
+              // if the subchain is correct, congrats
+              if (subChainCorrect){
+                currBondCorrect = true
+                var index = ansBonds.indexOf(ansBond)
+                ansBonds.splice(index, 1)
+              }
+            }
+          }
+        }
+      }
+
+      // if this bond is already correct, no need to compare with other ansBonds
+      if(currBondCorrect) { 
+        // console.log('THIS BOND IS CORRECT')
+        break 
+      }
+    }
+
+    // if this bond matches none of the ansBonds, it is wrong
+    if(!currBondCorrect) { 
+      // console.log('THIS BOND HAS NO MATCHES')
+      break 
+    }
+  }
+
+  // if currBondCorrect and no more correct bonds to clear, return true
+  if(currBondCorrect && ansBonds.length === 0){
+    return true
+  } 
+  // there are missing correct bonds
+  else { 
+    // console.log('THERE ARE MISSING CORRECT BONDS')
+    return false 
+  }
+
+}
+
+const markingProcess = () => {
+  const nodeDataArray = myDiagram.model.nodeDataArray
+  const linkDataArray = myDiagram.model.linkDataArray
+
+  if (nodeDataArray.length !== answers[compound].numElements){
+    updateResult('Wrong total number of elements.')
+    return false
+  }
+  
+  var [carbonKeys, carbonProfile, nodeProfile, elementNameMap, chargeMap] = parseLinkData()
+  var carbonLeaf = getCarbonLeaf(carbonProfile)
+
+  if (carbonLeaf !== null && carbonKeys.length === 1){
+    var longestCarbonChains = [carbonKeys]
+  } else if (carbonKeys.length === 0) {
+    updateResult('Lacking a carbon chain')
+    return false
+  } else { 
+    carbonLeaf = Number(carbonLeaf)
+    var longestCarbonChains = getLongestCarbonChains('', carbonLeaf, [carbonLeaf], carbonProfile)
+  }
+
+  const ans = answers[compound].data
+  const reverseAns = [...ans].reverse()
+  if(longestCarbonChains[0].length != ans.length){
+    updateResult('Length of your longest carbon chain is wrong.')
+    return false 
+  }
+
+  var overallCheck = 0;
+  for(let longestCarbonChain of longestCarbonChains){
+    // check first way
+    // console.log('first check')
+    for(let i = 0; i < longestCarbonChain.length; i++){
+      var checkThisNode = check(longestCarbonChain[i], ans[i].charge, ans[i].bondedTo, longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
+      if(!checkThisNode) {
+        overallCheck++
+        break 
+      }
+    }
+    // check reverse order
+    // console.log('second check')
+    for(let i = 0; i < longestCarbonChain.length; i++){
+      var checkThisNode = check(longestCarbonChain[i], reverseAns[i].charge, reverseAns[i].bondedTo, longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
+      if(!checkThisNode) {
+        overallCheck++
+        break 
+      }
+    }
+  }
+
+
+
+  
+  if (overallCheck === longestCarbonChains.length*2){
+    updateResult('Your answer is wrong.')
+    return false
+  } else {
+    updateResult('Your answer is correct.')
+    return true
+  } 
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Custom DraggingTool
 function SnappingTool() {
   go.DraggingTool.call(this);
 }

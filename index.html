@@ -4,23 +4,51 @@
 <head>
   <meta charset="UTF-8">
   <title>Organic Compound Diagram</title>
-  <meta name="description" content="A simple block diagram editor that includes context menus for changing shapes and colors." />
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://unpkg.com/gojs/release/go-debug.js"></script>
+  <link rel='stylesheet' href='styles.css'>
 </head>
 
 <body onload="init()">
 
-  <div id="sample">
+  <div style='position: relative; bottom: 70px;'>
+    <div class='hidingBox1'>
+      <p class='compoundName'></p> 
+    </div>
     <div id="myDiagramDiv" style="border: solid 1px black; width:100%; height:600px"></div>
-    <div id="buttons">
-      <button style='width: 100px; height: 50px;' onclick="logData()">Data</button>
-      <button style='width: 100px; height: 50px;' onclick="addIon()">Add Ion</button>
-      <button style='width: 100px; height: 50px;' onclick="deleteElement()">Delete element</button>
-      <button style='width: 100px; height: 50px;' onclick="check()">CH3CH3</button>
+  </div>
+
+
+
+  <!-- Choose compound row -->
+  <div class='compoundRow'>
+    <p style='font-family: Arial, Helvetica, sans-serif;'>Choose a compound:</p>
+    <button class="compoundButton" onclick='setCompound("Methane")'>Methane</button>
+    <button class="compoundButton" onclick='setCompound("Ethane")'>Ethane</button>
+    <button class="compoundButton" onclick='setCompound("Ethanoic acid")'>Ethanoic Acid</button>
+    <button class="compoundButton" onclick='setCompound("2-methylbutane")'>2-methylbutane</button>
+    <button class="compoundButton" onclick='setCompound("1-chloro-2-methylpropane")'>1-chloro-2-methylpropane</button>
+    <button class="compoundButton" onclick='setCompound("Sodium Ethanoate")'>Sodium Ethanoate</button>
+    <button class="compoundButton" onclick='setCompound("Ethyl Ethanoate")'>Ethyl Ethanoate</button>
+  </div>
+
+
+
+  <div id="interface">
+    <button style='width: 100px; height: 50px;' onclick="logData()">Data</button>
+    <button style='width: 100px; height: 50px;' onclick="addIon()">Add Ion</button>
+    <button style='width: 100px; height: 50px;' onclick="deleteElement()">Delete element</button>
+    <button style='width: 100px; height: 50px;' onclick="markingProcess()">Check</button>
+  </div>
+
+  <!-- Results -->
+  <div style='display: flex; justify-content: center;'>
+    <div class='resultsBox'>
+        <button style='height: 50px; width: 100px; margin-top: 10px;' onclick='markingProcess()'>Check Answer</button>
+        <p id='results' style='font-family: Arial, Helvetica, sans-serif; margin: 5px;'>Check answer to see your results.</p>
     </div>
   </div>
 
+  <script src="https://unpkg.com/gojs/release/go-debug.js"></script>
   <script src='./v2.js'></script>
 
 </body>
