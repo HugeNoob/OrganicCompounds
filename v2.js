@@ -449,10 +449,10 @@ const answers = {
         carbonIndex: 0,
         charge: 0,
         bondedTo: [
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
         ]
       },
     ],
@@ -466,20 +466,20 @@ const answers = {
         carbonIndex: 0,
         charge: 0,
         bondedTo: [
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
         ]
       },
       {
         carbonIndex: 1,
         charge: 0,
         bondedTo: [
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
         ]
       }
     ],
@@ -493,22 +493,22 @@ const answers = {
         carbonIndex: 0, 
         charge: 0,
         bondedTo: [
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
         ],
       },
       {
         carbonIndex: 1,
         charge: 0,
         bondedTo: [
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
-          {element: 'O', bondType: 'double', charge: 0, isLeaf: true},
-          {element: 'O', bondType: 'single', charge: 0, isLeaf: false, 
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+          {element: 'O', bondType: 'double', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'O', bondType: 'single', charge: 0, isLeaf: false, recurseInto: true,
             bondedTo: [
-              {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
-              {element: 'H', bondType: 'single', charge: 0, isLeaf: true}
+              {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+              {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false}
             ]
           },
         ]
@@ -524,47 +524,47 @@ const answers = {
         carbonIndex: 0, 
         charge: 0,
         bondedTo: [
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
         ],
       },
       {
         carbonIndex: 1, 
         charge: 0,
         bondedTo: [
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: false,
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: false, recurseInto: true,
             bondedTo: [
-              {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
-              {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-              {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-              {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+              {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+              {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+              {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+              {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
             ]
           },
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
         ],
       },
       {
         carbonIndex: 2, 
         charge: 0,
         bondedTo: [
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
         ],
       },
       {
         carbonIndex: 3, 
         charge: 0,
         bondedTo: [
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
         ],
       },
     ]
@@ -577,37 +577,37 @@ const answers = {
         carbonIndex: 0,
         charge: 0,
         bondedTo: [
-          {element: 'Cl', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'Cl', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
         ]
       },
       {
         carbonIndex: 1,
         charge: 0,
         bondedTo: [
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: false,
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: false, recurseInto: true,
             bondedTo: [
-              {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
-              {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-              {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-              {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+              {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+              {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+              {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+              {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
             ]
           },
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
         ]
       },
       {
         carbonIndex: 2,
         charge: 0,
         bondedTo: [
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
         ]
       },
     ]
@@ -620,22 +620,22 @@ const answers = {
         carbonIndex: 0,
         charge: 0,
         bondedTo: [
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
         ]
       },
       {
         carbonIndex: 1,
         charge: 0,
         bondedTo: [
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
-          {element: 'O', bondType: 'double', charge: 0, isLeaf: true},
-          {element: 'O', bondType: 'single', charge: -1, isLeaf: false,
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+          {element: 'O', bondType: 'double', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'O', bondType: 'single', charge: -1, isLeaf: false, recurseInto: true,
             bondedTo: [
-              {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
-              {element: 'Na', bondType: 'ionic', charge: 1, isLeaf: true},
+              {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+              {element: 'Na', bondType: 'ionic', charge: 1, isLeaf: true, recurseInto: false},
             ]
           },
         ]
@@ -650,32 +650,32 @@ const answers = {
         carbonIndex: 0,
         charge: 0,
         bondedTo: [
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
         ]
       },
       {
         carbonIndex: 1,
         charge: 0,
         bondedTo: [
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
-          {element: 'O', bondType: 'double', charge: 0, isLeaf: true},
-          {element: 'O', bondType: 'single', charge: 0, isLeaf: false,
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+          {element: 'O', bondType: 'double', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'O', bondType: 'single', charge: 0, isLeaf: false, recurseInto: true,
             bondedTo: [
-              {element: 'C', bondType: 'single', charge: 0, isMainChain: true},
-              {element: 'C', bondType: 'single', charge: 0, isMainChain: false,
+              {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+              {element: 'C', bondType: 'single', charge: 0, isMainChain: false, recurseInto: true,
                 bondedTo: [
-                  {element: 'O', bondType: 'single', charge: 0, isLeaf: true},
-                  {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-                  {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-                  {element: 'C', bondType: 'single', charge: 0, isMainChain: false,
+                  {element: 'O', bondType: 'single', charge: 0, isLeaf: false, recurseInto: false},
+                  {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+                  {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+                  {element: 'C', bondType: 'single', charge: 0, isMainChain: false, recurseInto: true,
                     bondedTo: [
-                      {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-                      {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-                      {element: 'H', bondType: 'single', charge: 0, isLeaf: true},
-                      {element: 'C', bondType: 'single', charge: 0, isLeaf: true},
+                      {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+                      {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+                      {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+                      {element: 'C', bondType: 'single', charge: 0, isMainChain: false, recurseInto: false},
                     ]
                   },
                 ]
@@ -850,6 +850,7 @@ const check = (currNodeKey, ansCharge, ansBondedTo, longestCarbonChain, nodeProf
     var bondType = bond[1]
     var elementCharge = chargeMap[bond[0]]
     var isLeaf = nodeProfile[bond[0]].length === 1 ? true : false
+    var isLeaf = nodeProfile[bond[0]].length === 1 ? true : false
 
     // console.log('-------------------------------------------------')
     // console.log('elementName')
@@ -878,22 +879,20 @@ const check = (currNodeKey, ansCharge, ansBondedTo, longestCarbonChain, nodeProf
           // If isMainChain value matches
           if (isMainChain === ansBond.isMainChain){
 
-            // If this C is part of main chain
-            if (isMainChain){
-              currBondCorrect = true
-              ansBonds.splice(index, 1)
-            } 
-            // if C is not part of main chain, recurse into the chain
-            else {
-              var reverseSequence = [...ansBondedTo].reverse()
-              var subChainCorrect1 = check(bond[0], ansBond.charge, [...ansBond.bondedTo], longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
-              var subChainCorrect2 = check(bond[0], ansBond.charge, reverseSequence, longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
-              
+            // if C is not part of main chain and demands recursion, recurse into the chain
+            if (!isMainChain && ansBond.recurseInto){
+              var subChainCorrect = check(bond[0], ansBond.charge, [...ansBond.bondedTo], longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
+
               // if the subchain is correct, congrats
-              if (subChainCorrect1 || subChainCorrect2){
+              if (subChainCorrect){
                 currBondCorrect = true
                 ansBonds.splice(index, 1)
               }
+            } 
+            // if C is part of main chain, or isnt but does not require recursion
+            else {
+              currBondCorrect = true
+              ansBonds.splice(index, 1)
             }
           }
         }
@@ -903,21 +902,19 @@ const check = (currNodeKey, ansCharge, ansBondedTo, longestCarbonChain, nodeProf
           if (isLeaf === ansBond.isLeaf){
             
             // if this element is leaf
-            if (isLeaf){
-              currBondCorrect = true
-              var index = ansBonds.indexOf(ansBond)
-              ansBonds.splice(index, 1)
-            }
-            // else if this element is not leaf, recurse into chain
-            else {
+            if (!isLeaf && ansBond.recurseInto){
               var subChainCorrect = check(bond[0], ansBond.charge, [...ansBond.bondedTo], longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
               
               // if the subchain is correct, congrats
               if (subChainCorrect){
                 currBondCorrect = true
-                var index = ansBonds.indexOf(ansBond)
                 ansBonds.splice(index, 1)
               }
+            }
+            // else if this element is not leaf, recurse into chain
+            else {
+              currBondCorrect = true
+              ansBonds.splice(index, 1)
             }
           }
         }
