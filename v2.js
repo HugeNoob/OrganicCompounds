@@ -65,7 +65,7 @@ const init = () => {
           'dragSelectingTool.isEnabled': false,
           'contextMenuTool.isEnabled': false,
           allowClipboard: false,
-          // allowVerticalScroll: false,
+          allowVerticalScroll: false,
           // allowHorizontalScroll: false,
           draggingTool: new SnappingTool(),
         });
@@ -689,32 +689,6 @@ const answers = {
     ]
   }
   
-}
-
-const findAllCarbonKeys = () => {
-  var carbonKeys = []
-  var carbonProfile = {}
-
-  for(let element of myDiagram.model.nodeDataArray){
-    if(element.text === 'C'){
-      carbonKeys.push(element.key)
-      carbonProfile[element.key] = []
-    }
-  }
-  return [carbonKeys, carbonProfile]
-}
-
-const createCarbonProfile = () => {
-  var [carbonKeys, carbonProfile] = findAllCarbonKeys()
-  var links = myDiagram.model.linkDataArray
-
-  for(let link of links){
-    if(carbonKeys.indexOf(link.to) !== -1 && carbonKeys.indexOf(link.from) !== -1){
-      carbonProfile[link.to].push(link.from)
-      carbonProfile[link.from].push(link.to)
-    }
-  }
-  return carbonProfile
 }
 
 const parseNodeData = () => {
