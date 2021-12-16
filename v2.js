@@ -65,6 +65,8 @@ const init = () => {
           'dragSelectingTool.isEnabled': false,
           'contextMenuTool.isEnabled': false,
           allowClipboard: false,
+          allowVerticalScroll: false,
+          allowHorizontalScroll: false,
           draggingTool: new SnappingTool(),
         });
 
