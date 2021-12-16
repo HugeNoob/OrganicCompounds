@@ -443,82 +443,7 @@ const updateResult = (result) => {
 var compound = '2-methylbutane'
 
 const answers = {
-  // CH4
-  'Methane': {
-    numElements: 5,
-    data: [
-      {
-        carbonIndex: 0,
-        charge: 0,
-        bondedTo: [
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
-        ]
-      },
-    ],
-  },
-
-  // CH3CH3
-  'Ethane': {
-    numElements: 8,
-    data: [
-      {
-        carbonIndex: 0,
-        charge: 0,
-        bondedTo: [
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
-        ]
-      },
-      {
-        carbonIndex: 1,
-        charge: 0,
-        bondedTo: [
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
-        ]
-      }
-    ],
-  },
-
-  // CH3COOH
-  'Ethanoic acid': {
-    numElements: 8,
-    data: [
-      {
-        carbonIndex: 0, 
-        charge: 0,
-        bondedTo: [
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
-          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
-        ],
-      },
-      {
-        carbonIndex: 1,
-        charge: 0,
-        bondedTo: [
-          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
-          {element: 'O', bondType: 'double', charge: 0, isLeaf: true, recurseInto: false},
-          {element: 'O', bondType: 'single', charge: 0, isLeaf: false, recurseInto: true,
-            bondedTo: [
-              {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
-              {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false}
-            ]
-          },
-        ]
-      }
-    ],
-  },
-  
-  // CH3CH2CH(CH3)2
+  // Alkanes
   '2-methylbutane': {
     numElements: 17,
     data: [
@@ -615,18 +540,91 @@ const answers = {
     ]
   },
 
-  'Sodium Ethanoate': {
+  // Alkenes
+  '1,2-dichloroethene': {
+    "numElements":6,
+    "data":[
+      {
+        "carbonIndex":0,
+        "charge":0,
+        "bondedTo":[
+          {"element":"C","bondType":"double","charge":0,"isMainChain":true,"recurseInto":false},
+          {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},
+          {"element":"Cl","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}
+        ]
+      },
+      {
+        "carbonIndex":1,
+        "charge":0,
+        "bondedTo":[
+          {"element":"C","bondType":"double","charge":0,"isMainChain":true,"recurseInto":false},
+          {"element":"Cl","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},
+          {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}
+        ]
+      }
+    ]
+  },
+
+  'doubleethene': {
+      "numElements":10,
+      "data":[
+        {
+          "carbonIndex":0,
+          "charge":0,
+          "bondedTo":[
+            {"element":"C","bondType":"double","charge":0,"isMainChain":true,"recurseInto":false},
+            {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},
+            {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}
+          ]
+        },
+        {
+          "carbonIndex":1,
+          "charge":0,
+          "bondedTo":[
+            {"element":"C","bondType":"double","charge":0,"isMainChain":true,"recurseInto":false},
+            {"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},
+            {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}
+          ]
+        },
+      {
+        "carbonIndex":2,
+        "charge":0,
+        "bondedTo":[
+          {"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},
+          {"element":"C","bondType":"double","charge":0,"isMainChain":true,"recurseInto":false},
+          {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}
+        ]
+      },
+      {
+        "carbonIndex":3,
+        "charge":0,
+        "bondedTo":[
+          {"element":"C","bondType":"double","charge":0,"isMainChain":true,"recurseInto":false},
+          {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},
+          {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}
+        ]
+      }
+    ]
+  },
+
+  // Alcohols
+  'Ethenol': {"numElements":7,"data":[{"carbonIndex":0,"charge":0,"bondedTo":[{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"C","bondType":"double","charge":0,"isMainChain":true,"recurseInto":false}]},{"carbonIndex":1,"charge":0,"bondedTo":[{"element":"O","bondType":"single","charge":0,"isLeaf":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"C","bondType":"double","charge":0,"isMainChain":true,"recurseInto":false}]}]},
+
+  '1,3-propanediol': {"numElements":13,"data":[{"carbonIndex":0,"charge":0,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"O","bondType":"single","charge":0,"isLeaf":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]}]},{"carbonIndex":1,"charge":0,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false}]},{"carbonIndex":2,"charge":0,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"O","bondType":"single","charge":0,"isLeaf":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]}]},
+
+  // Carboxylic acids
+  'Ethanoic acid': {
     numElements: 8,
     data: [
       {
-        carbonIndex: 0,
+        carbonIndex: 0, 
         charge: 0,
         bondedTo: [
           {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
           {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
           {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
           {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
-        ]
+        ],
       },
       {
         carbonIndex: 1,
@@ -634,18 +632,21 @@ const answers = {
         bondedTo: [
           {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
           {element: 'O', bondType: 'double', charge: 0, isLeaf: true, recurseInto: false},
-          {element: 'O', bondType: 'single', charge: -1, isLeaf: false, recurseInto: true,
+          {element: 'O', bondType: 'single', charge: 0, isLeaf: false, recurseInto: true,
             bondedTo: [
               {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
-              {element: 'Na', bondType: 'ionic', charge: 1, isLeaf: true, recurseInto: false},
+              {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false}
             ]
           },
         ]
-      },
-    ]
+      }
+    ],
   },
 
-  'Ethyl Ethanoate': {
+  '2-chloroprop-2-enoic acid': {"numElements":9,"data":[{"carbonIndex":0,"charge":0,"bondedTo":[{"element":"C","bondType":"double","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]},{"carbonIndex":1,"charge":0,"bondedTo":[{"element":"C","bondType":"double","charge":0,"isMainChain":true,"recurseInto":false},{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"Cl","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]},{"carbonIndex":2,"charge":0,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"O","bondType":"single","charge":0,"isLeaf":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]},{"element":"O","bondType":"double","charge":0,"isLeaf":true,"recurseInto":false}]}]},
+
+  // Esters
+  'Ethyl ethanoate': {
     numElements: 14,
     data: [
       {
@@ -687,8 +688,42 @@ const answers = {
         ]
       },
     ]
-  }
-  
+  },
+
+  'Prop-1-en-2-yl acetate': {"numElements":15,"data":[{"carbonIndex":0,"charge":0,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"O","bondType":"double","charge":0,"isLeaf":true,"recurseInto":false},{"element":"O","bondType":"single","charge":0,"isLeaf":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"C","bondType":"single","charge":0,"isMainChain":false,"recurseInto":true,"bondedTo":[{"element":"O","bondType":"single","charge":0,"isLeaf":false,"recurseInto":false},{"element":"C","bondType":"single","charge":0,"isMainChain":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":false,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]},{"element":"C","bondType":"double","charge":0,"isMainChain":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"double","charge":0,"isMainChain":false,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]}]}]}]},{"carbonIndex":1,"charge":0,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]}]},
+
+  // Salts
+  'Sodium ethanoate': {
+    numElements: 8,
+    data: [
+      {
+        carbonIndex: 0,
+        charge: 0,
+        bondedTo: [
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'H', bondType: 'single', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+        ]
+      },
+      {
+        carbonIndex: 1,
+        charge: 0,
+        bondedTo: [
+          {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+          {element: 'O', bondType: 'double', charge: 0, isLeaf: true, recurseInto: false},
+          {element: 'O', bondType: 'single', charge: -1, isLeaf: false, recurseInto: true,
+            bondedTo: [
+              {element: 'C', bondType: 'single', charge: 0, isMainChain: true, recurseInto: false},
+              {element: 'Na', bondType: 'ionic', charge: 1, isLeaf: true, recurseInto: false},
+            ]
+          },
+        ]
+      },
+    ]
+  },
+
+  'Sodium 2-hydroxyacetate': {"numElements":9,"data":[{"carbonIndex":0,"charge":0,"bondedTo":[{"element":"O","bondType":"double","charge":0,"isLeaf":true,"recurseInto":false},{"element":"O","bondType":"single","charge":-1,"isLeaf":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"Na","bondType":"ionic","charge":1,"isLeaf":true,"recurseInto":false}]},{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false}]},{"carbonIndex":1,"charge":0,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"O","bondType":"single","charge":0,"isLeaf":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]}]}]}
 }
 
 const parseNodeData = () => {
@@ -1094,7 +1129,7 @@ const generateAnswer = () => {
   }
 
   var finalAns = {numElements: numElements, data: data}
-  return finalAns
+  document.getElementById('generatedAnswer').innerText = JSON.stringify(finalAns)
 }
 
 
