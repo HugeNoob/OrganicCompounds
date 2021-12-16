@@ -973,9 +973,6 @@ const markingProcess = () => {
     }
   }
 
-
-
-  
   if (overallCheck === longestCarbonChains.length*2){
     updateResult('Your answer is wrong.')
     return false
@@ -990,6 +987,115 @@ const markingProcess = () => {
 
 
 
+// Answer generation
+
+const scan = (currNodeKey, parentKey, longestCarbonChain, nodeProfile, elementNameMap, chargeMap) => {
+  var nodeData = {}
+
+  // Main carbon chain
+  if(elementNameMap[currNodeKey] === 'C' && longestCarbonChain.indexOf(currNodeKey) !== -1){
+    nodeData['carbonIndex'] = longestCarbonChain.indexOf(currNodeKey)
+    nodeData['charge'] = chargeMap[currNodeKey]
+    
+    // Obtain data for each bonded node
+    var bondedTo = []
+    for(let bond of nodeProfile[currNodeKey]){
+      var element = elementNameMap[bond[0]]
+      var bondType = bond[1]
+      var charge = chargeMap[bond[0]]
+      var isMainChain = null;
+      var isLeaf = null;
+
+      // If C, get isMainChain, else isLeaf
+      if(element === 'C'){
+        var isMainChain = longestCarbonChain.indexOf(bond[0]) != -1 ? true : false
+      } else {
+        var isLeaf = nodeProfile[bond[0]].length === 1 ? true : false
+      }
+
+      // Decide whether to recurse into
+      if(isMainChain === false || isLeaf === false){
+        var recurseInto = true
+        var childBondedTo = scan(bond[0], currNodeKey, longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
+
+        if(isMainChain !== null){
+          bondedTo.push({element: element, bondType: bondType, charge: charge, isMainChain: isMainChain, recurseInto: recurseInto, bondedTo: childBondedTo})
+        } else {
+          bondedTo.push({element: element, bondType: bondType, charge: charge, isLeaf: isLeaf, recurseInto: recurseInto, bondedTo: childBondedTo})
+        }
+      } else if(isMainChain === true) {
+        var recurseInto = false
+        bondedTo.push({element: element, bondType: bondType, charge: charge, isMainChain: isMainChain, recurseInto: recurseInto})
+      } else {
+        var recurseInto = false
+        bondedTo.push({element: element, bondType: bondType, charge: charge, isLeaf: isLeaf, recurseInto: recurseInto})
+      }
+    }
+    nodeData['bondedTo'] = bondedTo
+    return nodeData
+  }
+
+  // Side chain recursive solution
+  else {
+    var bondedTo = []
+    for(let bond of nodeProfile[currNodeKey]){
+      var element = elementNameMap[bond[0]]
+      var bondType = bond[1]
+      var charge = chargeMap[bond[0]]
+      var isMainChain = null;
+      var isLeaf = null;
+
+      // If C, get isMainChain, else isLeaf
+      if(element === 'C'){
+        var isMainChain = longestCarbonChain.indexOf(bond[0]) != -1 ? true : false
+      } else {
+        var isLeaf = nodeProfile[bond[0]].length === 1 ? true : false
+      }
+
+      // Decide whether to recurse into
+      if((isMainChain === false || isLeaf === false) && bond[0] != parentKey){
+        var recurseInto = true
+        var childBondedTo = scan(bond[0], currNodeKey, longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
+        bondedTo.push({element: element, bondType: bondType, charge: charge, isMainChain: isMainChain, recurseInto: recurseInto, bondedTo: childBondedTo})
+      } else if(isMainChain !== null) {
+        var recurseInto = false
+        bondedTo.push({element: element, bondType: bondType, charge: charge, isMainChain: isMainChain, recurseInto: recurseInto})
+      } else {
+        var recurseInto = false
+        bondedTo.push({element: element, bondType: bondType, charge: charge, isLeaf: isLeaf, recurseInto: recurseInto})
+      }
+    }
+
+    return bondedTo
+  }
+}
+
+const generateAnswer = () => {
+  const nodeDataArray = myDiagram.model.nodeDataArray
+  const numElements = nodeDataArray.length
+
+  var [carbonKeys, carbonProfile, nodeProfile, elementNameMap, chargeMap] = parseLinkData()
+  var carbonLeaf = getCarbonLeaf(carbonProfile)
+
+  if (carbonLeaf !== null && carbonKeys.length === 1){
+    var longestCarbonChains = [carbonKeys]
+  } else if (carbonKeys.length === 0) {
+    console.log('Lacking a carbon chain')
+    return false
+  } else { 
+    carbonLeaf = Number(carbonLeaf)
+    var longestCarbonChains = getLongestCarbonChains('', carbonLeaf, [carbonLeaf], carbonProfile)
+  }
+  
+  var data = []
+  var longestCarbonChain = longestCarbonChains[0]
+  for(let carbon of longestCarbonChain){
+    data.push(scan(carbon, null, longestCarbonChain, nodeProfile, elementNameMap, chargeMap))
+  }
+
+  var finalAns = {numElements: numElements, data: data}
+  return finalAns
+}
 
 
 
