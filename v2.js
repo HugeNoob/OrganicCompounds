@@ -339,7 +339,7 @@ const init = () => {
       },
     ]
 
-    setCompound('Methane')
+    setCompound('2-methylbutane')
 }
 
 // Ends TextEditingTool when clicking out of myDiagram

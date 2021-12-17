@@ -8,72 +8,99 @@
   <link rel='stylesheet' href='styles.css'>
 </head>
 
-<body onload="init()">
+<body style='background-color: #ADD8E6;' onload="init()">
+  <h1 style='display: flex; justify-content: center; font-family: Arial, Helvetica, sans-serif;'>Organic Compound Interactive Diagram</h1>
+
+  <!-- Instructions -->
+  <div style='display: flex; justify-content: center;'>
+    <div class='instructionsBox'>
+        <p class='instructionsText' style="line-height: 0px; font-weight: bold;">Instructions:</p>
+        <p class='instructionsText'>1. Select an element and click on the text to edit. You can also drag it around.</p>
+        <p class='instructionsText'>2. Click on the arrows after selecting an element to create new linked elements.</p>
+        <p class='instructionsText'>3. Click on the bonds to change between single, double, and triple bonds.</p>
+        <p class='instructionsText'>4. Double click on the blue box on the top right of an element to change its charge.</p>
+        <p class='instructionsText'>5. To add ions for salts (eg. Na<sup>+</sup>), click on the 'Add Ion' button below.</p>
+        <p class='instructionsText'>6. Drag the ion beside the element you want it to connect to. It should snap into place.</p>
+        <p class='instructionsText'>7. Delete unwanted ions or elements with BACKSPACE or the 'Delete element' button below.</p>
+        <p class='instructionsText'>Tip 1: You can zoom in and out of the diagram. Use the + and - buttons on a computer or pinch in and out on mobile.</p>
+        <p class='instructionsText'>Tip 2: After an ion snaps into place, the charges will be circled to indicate an ionic bond.</p>
+        <p class='instructionsText'>Tip 3: You can hold SHIFT and drag a connected ion if you want to disconnect and reposition it.</p>
+    </div>
+  </div>  
 
   <!-- Choose compound row -->
-  <div style='display: flex; justify-content: center;'>
-    <div style='display: flex; flex-direction: column; align-items: flex-end;'>
-      <div class='compoundRow'>
-        <p style='font-family: Arial, Helvetica, sans-serif;'>Alkanes:</p>
-        <button class="compoundButton" onclick='setCompound("2-methylbutane")'>2-methylbutane</button>
-        <button class="compoundButton" onclick='setCompound("1-chloro-2-methylpropane")'>1-chloro-2-methylpropane</button>
+  <div style='display: flex; flex-direction: row; justify-content: center; min-width: 1400px;'>
+    <div style='display: flex; flex-direction: row; align-items: flex-end;'>
+      <div class='compoundColumn'>
+        <div class='compoundRow'>
+          <p style='font-family: Arial, Helvetica, sans-serif;'>Alkanes:</p>
+          <button class="compoundButton" onclick='setCompound("2-methylbutane")'>2-methylbutane</button>
+          <button class="compoundButton" onclick='setCompound("1-chloro-2-methylpropane")'>1-chloro-2-methylpropane</button>
+        </div>
+          
+        <div class='compoundRow'>
+          <p style='font-family: Arial, Helvetica, sans-serif;'>Carboxylic acids:</p>
+          <button class="compoundButton" onclick='setCompound("Ethanoic acid")'>Ethanoic acid</button>
+          <button class="compoundButton" onclick='setCompound("Ethanoic acid")'>2-chloroprop-2-enoic acid</button>
+        </div>
       </div>
 
-      <div class='compoundRow'>
-        <p style='font-family: Arial, Helvetica, sans-serif;'>Alkenes:</p>
-        <button class="compoundButton" onclick='setCompound("1,2-dichloroethene")'>1,2-dichloroethene</button>
-        <button class="compoundButton" onclick='setCompound("Butadiene")'>Butadiene</button>
-      </div>
-
-      <div class='compoundRow'>
-        <p style='font-family: Arial, Helvetica, sans-serif;'>Alcohols:</p>
-        <button class="compoundButton" onclick='setCompound("Ethenol")'>Ethenol</button>
-        <button class="compoundButton" onclick='setCompound("1,3-propanediol")'>1,3-propanediol</button>
-      </div> 
-      
-      <div class='compoundRow'>
-        <p style='font-family: Arial, Helvetica, sans-serif;'>Carboxylic acids:</p>
-        <button class="compoundButton" onclick='setCompound("Ethanoic acid")'>Ethanoic acid</button>
-        <button class="compoundButton" onclick='setCompound("Ethanoic acid")'>2-chloroprop-2-enoic acid</button>
-      </div> 
-      
-      <div class='compoundRow'>
-        <p style='font-family: Arial, Helvetica, sans-serif;'>Esters:</p>
-        <button class="compoundButton" onclick='setCompound("Ethyl ethanoate")'>Ethyl ethanoate</button>
-        <button class="compoundButton" onclick='setCompound("Prop-1-en-2-yl acetate")'>Prop-1-en-2-yl acetate</button>
-      </div> 
+      <div class='compoundColumn'>
+        <div class='compoundRow'>
+            <p style='font-family: Arial, Helvetica, sans-serif;'>Alkenes:</p>
+            <button class="compoundButton" onclick='setCompound("1,2-dichloroethene")'>1,2-dichloroethene</button>
+            <button class="compoundButton" onclick='setCompound("Butadiene")'>Butadiene</button>
+        </div>
         
-      <div class='compoundRow'>
-        <p style='font-family: Arial, Helvetica, sans-serif;'>Salts:</p>
-        <button class="compoundButton" onclick='setCompound("Sodium Ethanoate")'>Sodium ethanoate</button>
-        <button class="compoundButton" onclick='setCompound("Sodium 2-hydroxyacetate")'>Sodium 2-hydroxyacetate</button>
-      </div> 
+        <div class='compoundRow'>
+            <p style='font-family: Arial, Helvetica, sans-serif;'>Esters:</p>
+            <button class="compoundButton" onclick='setCompound("Ethyl ethanoate")'>Ethyl ethanoate</button>
+            <button class="compoundButton" onclick='setCompound("Prop-1-en-2-yl acetate")'>Prop-1-en-2-yl acetate</button>
+        </div>
+      </div>
+
+      <div class='compoundColumn'>
+        <div class='compoundRow'>
+          <p style='font-family: Arial, Helvetica, sans-serif;'>Alcohols:</p>
+          <button class="compoundButton" onclick='setCompound("Ethenol")'>Ethenol</button>
+          <button class="compoundButton" onclick='setCompound("1,3-propanediol")'>1,3-propanediol</button>
+        </div>
+          
+        <div class='compoundRow'>
+          <p style='font-family: Arial, Helvetica, sans-serif;'>Salts:</p>
+          <button class="compoundButton" onclick='setCompound("Sodium Ethanoate")'>Sodium ethanoate</button>
+          <button class="compoundButton" onclick='setCompound("Sodium 2-hydroxyacetate")'>Sodium 2-hydroxyacetate</button>
+        </div>
+      </div>
     </div>
   </div>
   
-    
+  <!-- Diagram -->
   <div style='position: relative; bottom: 70px;'>
     <div class='hidingBox1'>
       <p class='compoundName'></p> 
     </div>
-    <div id="myDiagramDiv" style="border: solid 1px black; width:100%; height:600px"></div>
+    <div id="myDiagramDiv" style="border: solid 1px black; width:100%; height:600px; background-color: #fff;"></div>
   </div>
 
-  <div id="interface">
-    <button style='width: 100px; height: 50px;' onclick="logData()">Data</button>
-    <button style='width: 100px; height: 50px;' onclick="addIon()">Add Ion</button>
-    <button style='width: 100px; height: 50px;' onclick="deleteElement()">Delete element</button>
-    <button style='width: 100px; height: 50px;' onclick="markingProcess()">Check</button>
-    <button style='width: 100px; height: 50px;' onclick="generateAnswer()">Generate Answer</button>
-  </div>
+  <div style='position: relative; bottom: 70px;'>
+    <!-- Interface row -->
+    <div style='display: flex; justify-content: center;'>
+      <div class="interface">
+        <!-- <button class='interfaceButton' onclick="logData()">Data</button> -->
+        <button class='interfaceButton' onclick="addIon()">Add Ion</button>
+        <button class='interfaceButton' onclick="deleteElement()">Delete element</button>
+        <!-- <button style='width: 100px; height: 50px;' onclick="generateAnswer()">Generate Answer</button> -->
+      </div>
+    </div>
+    <p id='generatedAnswer'></p>
 
-  <p id='generatedAnswer'></p>
-
-  <!-- Results -->
-  <div style='display: flex; justify-content: center;'>
-    <div class='resultsBox'>
-        <button style='height: 50px; width: 100px; margin-top: 10px;' onclick='markingProcess()'>Check Answer</button>
-        <p id='results' style='font-family: Arial, Helvetica, sans-serif; margin: 5px;'>Check answer to see your results.</p>
+    <!-- Results -->
+    <div style='display: flex; justify-content: center;'>
+      <div class='resultsBox'>
+          <button style='height: 50px; width: 100px; margin-top: 10px;' onclick='markingProcess()'>Check Answer</button>
+          <p id='results' style='font-family: Arial, Helvetica, sans-serif; margin: 10px;'>Check answer to see your results.</p>
+      </div>
     </div>
   </div>
 
