@@ -1,5 +1,4 @@
 # OrganicCompounds
-Interactive organic compound diagrams made with the GoJS library.  
 
 
 Interactive organic compound diagrams made with the GoJS library. Not the best web design but the focal point is the interactive diagram.  
