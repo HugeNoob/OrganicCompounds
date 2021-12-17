@@ -790,19 +790,18 @@ const parseLinkData = () => {
   return [carbonKeys, carbonProfile, nodeProfile, elementNameMap, chargeMap]
 }
 
-const getCarbonLeaf = (carbonProfile) => {
-  var carbonLeaf = null;
+const getCarbonLeafs = (carbonProfile) => {
+  var carbonLeafs = [];
   
   if(Object.keys(carbonProfile).length === 1){
     return -1
   }
   for (let c in carbonProfile){
-    carbonLeaf = carbonProfile[c].length === 1 ? c : null
-    if (carbonLeaf !== null){
-      return carbonLeaf
+    if (carbonProfile[c].length === 1){
+      carbonLeafs.push(Number(c))
     }
   }
-  return carbonLeaf
+  return carbonLeafs
 }
 
 // TECHNICALLY, second and third cases are only present to improve efficiency but are not needed
@@ -996,16 +995,23 @@ const markingProcess = () => {
   }
   
   var [carbonKeys, carbonProfile, nodeProfile, elementNameMap, chargeMap] = parseLinkData()
-  var carbonLeaf = getCarbonLeaf(carbonProfile)
+  var carbonLeafs = getCarbonLeafs(carbonProfile)
 
-  if (carbonLeaf !== null && carbonKeys.length === 1){
+  if (carbonKeys.length === 1){
     var longestCarbonChains = [carbonKeys]
   } else if (carbonKeys.length === 0) {
     updateResult('Lacking a carbon chain')
     return false
   } else { 
-    carbonLeaf = Number(carbonLeaf)
-    var longestCarbonChains = getLongestCarbonChains('', carbonLeaf, [carbonLeaf], carbonProfile)
+    var longest = 0;
+    var longestCarbonChains;
+    for(let c of carbonLeafs){
+      var tempChains = getLongestCarbonChains('', c, [c], carbonProfile)
+      if(tempChains[0].length > longest){
+        longest = tempChains[0].length
+        longestCarbonChains = tempChains
+      }
+    }
   }
 
   const ans = answers[compound].data
@@ -1014,7 +1020,6 @@ const markingProcess = () => {
     updateResult('Length of your longest carbon chain is wrong.')
     return false 
   }
-
   var overallCheck = 0;
   for(let longestCarbonChain of longestCarbonChains){
     // check first way
