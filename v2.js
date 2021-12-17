@@ -70,28 +70,28 @@ const init = () => {
           draggingTool: new SnappingTool(),
         });
 
-    const changeCharge = (e, node) => {
-      e.diagram.commit(function(diag) {
-        var nodeData = node.tb
-        myDiagram.model.removeNodeData(nodeData)
-        var charge = nodeData['charge']
-        var elementType;
+    // const changeCharge = (e, node) => {
+    //   e.diagram.commit(function(diag) {
+    //     var nodeData = node.tb
+    //     myDiagram.model.removeNodeData(nodeData)
+    //     var charge = nodeData['charge']
+    //     var elementType;
 
-        if(charge === 0){
-          charge = 1
-          elementType = 'ion'
-        } else if (charge === 1) {
-          charge = -1
-          elementType = 'ion'
-        } else {
-          charge = 0
-          elementType = 'element'
-        }
+    //     if(charge === 0){
+    //       charge = 1
+    //       elementType = 'ion'
+    //     } else if (charge === 1) {
+    //       charge = -1
+    //       elementType = 'ion'
+    //     } else {
+    //       charge = 0
+    //       elementType = 'element'
+    //     }
 
-        var newNodeData = {...nodeData, charge: charge, elementType: elementType}
-        myDiagram.model.addNodeData(newNodeData)
-      })
-    }
+    //     var newNodeData = {...nodeData, charge: charge, elementType: elementType}
+    //     myDiagram.model.addNodeData(newNodeData)
+    //   })
+    // }
 
     var nodeMap = new go.Map();
     // Generic node template for both cations and organic structure to be inherited/copied
@@ -99,8 +99,8 @@ const init = () => {
       $(go.Node, "Spot",
         {
           locationObjectName: "SHAPE",
-          locationSpot: go.Spot.Center, 
-          doubleClick: changeCharge,
+          locationSpot: go.Spot.Center,
+          // doubleClick: changeCharge,
           minSize: new go.Size(30, 30),
           itemTemplate:
           // each port is a Circle whose alignment spot and port ID are given by the item data
@@ -161,7 +161,7 @@ const init = () => {
               figure: 'PlusLine',
               stroke: 'black',
             },
-            new go.Binding("background", "isSelected", function(s) { return s ? "#00FFFF" : "transparent"; }).ofObject(),
+            // new go.Binding("background", "isSelected", function(s) { return s ? "#00FFFF" : "transparent"; }).ofObject(),
             new go.Binding('figure', '', function(node){
               if(node.charge === 1){
                 return node.ionicBonded === true ? 'ConnectedCation' : 'PlusLine'
@@ -353,6 +353,9 @@ document.addEventListener("mousedown", function() {
 });
 
 
+
+
+
 // Helper functions
 const logData = () => {
   console.log('Data')
@@ -390,7 +393,6 @@ const deleteElement = () => {
     }
 }
 
-// Helper functions
 const setCompound = (x) => {
   compound = x
   // Update diagram data
@@ -432,6 +434,33 @@ const updateResult = (result) => {
   } else {
     document.getElementById('results').style.color = 'red'
   }
+}
+
+const changeCharge = () => {
+    selected = myDiagram.selection.first() !== null ? myDiagram.selection.first().tb : null
+    if(selected === null){ return }
+    var node = myDiagram.findNodeForKey(selected.key);
+    if (node !== null) {
+      var nodeData = node.data
+      myDiagram.startTransaction();
+      var charge = nodeData['charge']
+      var elementType;
+
+      if(charge === 0){
+        charge = 1
+        elementType = 'ion'
+      } else if (charge === 1) {
+        charge = -1
+        elementType = 'ion'
+      } else {
+        charge = 0
+        elementType = 'element'
+      }
+
+      myDiagram.model.setDataProperty(nodeData, 'charge', charge)
+      myDiagram.model.setDataProperty(nodeData, 'elementType', elementType)
+      myDiagram.commitTransaction();
+    }
 }
 
 
@@ -690,7 +719,7 @@ const answers = {
     ]
   },
 
-  'Prop-1-en-2-yl acetate': {"numElements":15,"data":[{"carbonIndex":0,"charge":0,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"O","bondType":"double","charge":0,"isLeaf":true,"recurseInto":false},{"element":"O","bondType":"single","charge":0,"isLeaf":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"C","bondType":"single","charge":0,"isMainChain":false,"recurseInto":true,"bondedTo":[{"element":"O","bondType":"single","charge":0,"isLeaf":false,"recurseInto":false},{"element":"C","bondType":"single","charge":0,"isMainChain":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":false,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]},{"element":"C","bondType":"double","charge":0,"isMainChain":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"double","charge":0,"isMainChain":false,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]}]}]}]},{"carbonIndex":1,"charge":0,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]}]},
+  'Prop-1-en-2-yl acetate': {"numElements":15,"data":[{"carbonIndex":0,"charge":0,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]},{"carbonIndex":1,"charge":0,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"C","bondType":"double","charge":0,"isMainChain":true,"recurseInto":false},{"element":"O","bondType":"single","charge":0,"isLeaf":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"C","bondType":"single","charge":0,"isMainChain":false,"recurseInto":true,"bondedTo":[{"element":"O","bondType":"single","charge":0,"isLeaf":false,"recurseInto":false},{"element":"O","bondType":"double","charge":0,"isLeaf":true,"recurseInto":false},{"element":"C","bondType":"single","charge":0,"isMainChain":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":false,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]}]}]}]},{"carbonIndex":2,"charge":0,"bondedTo":[{"element":"C","bondType":"double","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]}]},
 
   // Salts
   'Sodium ethanoate': {
