@@ -594,7 +594,7 @@ const answers = {
     ]
   },
 
-  'doubleethene': {
+  'Butadiene': {
       "numElements":10,
       "data":[
         {
@@ -752,7 +752,8 @@ const answers = {
     ]
   },
 
-  'Sodium 2-hydroxyacetate': {"numElements":9,"data":[{"carbonIndex":0,"charge":0,"bondedTo":[{"element":"O","bondType":"double","charge":0,"isLeaf":true,"recurseInto":false},{"element":"O","bondType":"single","charge":-1,"isLeaf":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"Na","bondType":"ionic","charge":1,"isLeaf":true,"recurseInto":false}]},{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false}]},{"carbonIndex":1,"charge":0,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"O","bondType":"single","charge":0,"isLeaf":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]}]}]}
+  'Sodium 2-hydroxyacetate': {"numElements":9,"data":[{"carbonIndex":0,"charge":0,"bondedTo":[{"element":"O","bondType":"double","charge":0,"isLeaf":true,"recurseInto":false},{"element":"O","bondType":"single","charge":-1,"isLeaf":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"Na","bondType":"ionic","charge":1,"isLeaf":true,"recurseInto":false}]},{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false}]},{"carbonIndex":1,"charge":0,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},{"element":"O","bondType":"single","charge":0,"isLeaf":false,"recurseInto":true,"bondedTo":[{"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},{"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}]}]}]},
+
 }
 
 const parseNodeData = () => {
@@ -1125,7 +1126,12 @@ const scan = (currNodeKey, parentKey, longestCarbonChain, nodeProfile, elementNa
       if((isMainChain === false || isLeaf === false) && bond[0] != parentKey){
         var recurseInto = true
         var childBondedTo = scan(bond[0], currNodeKey, longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
-        bondedTo.push({element: element, bondType: bondType, charge: charge, isMainChain: isMainChain, recurseInto: recurseInto, bondedTo: childBondedTo})
+
+        if(isMainChain !== null){
+          bondedTo.push({element: element, bondType: bondType, charge: charge, isMainChain: isMainChain, recurseInto: recurseInto, bondedTo: childBondedTo})
+        } else {
+          bondedTo.push({element: element, bondType: bondType, charge: charge, isLeaf: isLeaf, recurseInto: recurseInto, bondedTo: childBondedTo})
+        }
       } else if(isMainChain !== null) {
         var recurseInto = false
         bondedTo.push({element: element, bondType: bondType, charge: charge, isMainChain: isMainChain, recurseInto: recurseInto})
@@ -1144,16 +1150,23 @@ const generateAnswer = () => {
   const numElements = nodeDataArray.length
 
   var [carbonKeys, carbonProfile, nodeProfile, elementNameMap, chargeMap] = parseLinkData()
-  var carbonLeaf = getCarbonLeaf(carbonProfile)
+  var carbonLeafs = getCarbonLeafs(carbonProfile)
 
-  if (carbonLeaf !== null && carbonKeys.length === 1){
+  if (carbonKeys.length === 1){
     var longestCarbonChains = [carbonKeys]
   } else if (carbonKeys.length === 0) {
     console.log('Lacking a carbon chain')
     return false
   } else { 
-    carbonLeaf = Number(carbonLeaf)
-    var longestCarbonChains = getLongestCarbonChains('', carbonLeaf, [carbonLeaf], carbonProfile)
+    var longest = 0;
+    var longestCarbonChains;
+    for(let c of carbonLeafs){
+      var tempChains = getLongestCarbonChains('', c, [c], carbonProfile)
+      if(tempChains[0].length > longest){
+        longest = tempChains[0].length
+        longestCarbonChains = tempChains
+      }
+    }
   }
   
   var data = []
