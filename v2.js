@@ -59,13 +59,13 @@ const init = () => {
     myDiagram =
       $(go.Diagram, "myDiagramDiv",
         {
-          initialScale: 1.5,
+          initialScale: 1,
           maxSelectionCount: 1,
           allowLink: false,  // no user-drawn links
           'dragSelectingTool.isEnabled': false,
           'contextMenuTool.isEnabled': false,
           allowClipboard: false,
-          allowVerticalScroll: false,
+          // allowVerticalScroll: false,
           // allowHorizontalScroll: false,
           draggingTool: new SnappingTool(),
         });
@@ -100,7 +100,6 @@ const init = () => {
         {
           locationObjectName: "SHAPE",
           locationSpot: go.Spot.Center,
-          // doubleClick: changeCharge,
           minSize: new go.Size(30, 30),
           itemTemplate:
           // each port is a Circle whose alignment spot and port ID are given by the item data
@@ -190,7 +189,7 @@ const init = () => {
     // Include four large triangular buttons so that the user can easily make a copy
     // of the node, move it to be in that direction relative to the original node,
     // and add a link to the new node.
-    const makeArrowButton = (spot, fig) => {
+    const makeArrowButton = (spot, fig, direction) => {
       var maker = function(e, shape) {
           e.handled = true;
           e.diagram.model.commit(function(m) {
@@ -204,7 +203,53 @@ const init = () => {
             p.x += Math.sign(p.x) * 60;
             p.y += Math.sign(p.y) * 60;
             p.add(selnode.location);
-            // p.snapToGridPoint(e.diagram.grid.gridOrigin, e.diagram.grid.gridCellSize);
+            var nearbyElements = myDiagram.findObjectAt(p)
+            var scaling = 1;
+
+            while(nearbyElements != null){
+              var initialX = p.x
+              var initialY = p.y
+              if(direction === 'up' || direction === 'down'){
+                if(p.x === 0){
+                  p.x = 60
+                } else {
+                  var first = p.x + Math.sign(p.x) * (60*scaling);
+                  var second = p.x - Math.sign(p.x) * (60*scaling);
+                  p.x = first
+                  if(myDiagram.findObjectAt(p) === null){
+                    break
+                  }
+
+                  p.x = second
+                  if(myDiagram.findObjectAt(p) === null){
+                    break
+                  }
+
+                  p.x = initialX
+                  scaling += 1
+                }
+              } else {
+                if(p.y === 0){
+                  p.y = 60
+                } else {
+                  var first = p.y + Math.sign(p.y) * (60*scaling);
+                  var second = p.y - Math.sign(p.y) * (60*scaling);
+                  p.y = first
+                  if(myDiagram.findObjectAt(p) === null){
+                    break
+                  }
+
+                  p.y = second
+                  if(myDiagram.findObjectAt(p) === null){
+                    break
+                  }
+
+                  p.y = initialY
+                  scaling += 1
+                }
+              }
+              nearbyElements = myDiagram.findObjectAt(p)
+            }
 
             // make the new node a copy of the selected node
             var nodedata = m.copyNodeData(selnode.data);
@@ -221,6 +266,7 @@ const init = () => {
 
             // select new node and start to edit it
             e.diagram.select(newnode);
+            myDiagram.zoomToFit()
             setTimeout(function() {
             e.diagram.commandHandler.editTextBlock();
             }, 20);
