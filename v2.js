@@ -100,14 +100,14 @@ const init = () => {
         {
           locationObjectName: "SHAPE",
           locationSpot: go.Spot.Center,
-          minSize: new go.Size(30, 30),
+          minSize: new go.Size(60, 60),
           itemTemplate:
           // each port is a Circle whose alignment spot and port ID are given by the item data
             $(go.Panel,
               new go.Binding("portId", "id"),
               new go.Binding("alignment", "spot", go.Spot.parse),
               $(go.Shape, "Circle",
-                { width: 2, height: 2, fill: 'transparent', stroke: null },
+                { width: 3, height: 3, fill: 'transparent', stroke: null },
                 new go.Binding('fill', 'fill')
                 ),
             ),
@@ -147,18 +147,19 @@ const init = () => {
               editable: true, 
               isMultiline: false,
               verticalAlignment: go.Spot.Center,
-              font: "32px Fira Sans, sans-serif",
+              font: "50px Fira Sans, sans-serif",
               textValidation: validElement,
             },
             // this Binding is TwoWay due to the user editing the text with the TextEditingTool
             new go.Binding("text").makeTwoWay()),
           $(go.Shape,
             {
-              height: 8,
-              width: 8,
+              height: 12,
+              width: 12,
               alignment: new go.Spot(0.9, 0),
               figure: 'PlusLine',
               stroke: 'black',
+              strokeWidth: 1.5,
             },
             // new go.Binding("background", "isSelected", function(s) { return s ? "#00FFFF" : "transparent"; }).ofObject(),
             new go.Binding('figure', '', function(node){
@@ -200,8 +201,8 @@ const init = () => {
             
             p.subtract(selnode.location);
             p.scale(2, 2);
-            p.x += Math.sign(p.x) * 60;
-            p.y += Math.sign(p.y) * 60;
+            p.x += Math.sign(p.x) * 90;
+            p.y += Math.sign(p.y) * 90;
             p.add(selnode.location);
             var nearbyElements = myDiagram.findObjectAt(p)
             var scaling = 1;
@@ -211,10 +212,10 @@ const init = () => {
               var initialY = p.y
               if(direction === 'up' || direction === 'down'){
                 if(p.x === 0){
-                  p.x = 60
+                  p.x = 90
                 } else {
-                  var first = p.x + Math.sign(p.x) * (60*scaling);
-                  var second = p.x - Math.sign(p.x) * (60*scaling);
+                  var first = p.x + Math.sign(p.x) * (90*scaling);
+                  var second = p.x - Math.sign(p.x) * (90*scaling);
                   p.x = first
                   if(myDiagram.findObjectAt(p) === null){
                     break
@@ -230,10 +231,10 @@ const init = () => {
                 }
               } else {
                 if(p.y === 0){
-                  p.y = 60
+                  p.y = 90
                 } else {
-                  var first = p.y + Math.sign(p.y) * (60*scaling);
-                  var second = p.y - Math.sign(p.y) * (60*scaling);
+                  var first = p.y + Math.sign(p.y) * (90*scaling);
+                  var second = p.y - Math.sign(p.y) * (90*scaling);
                   p.y = first
                   if(myDiagram.findObjectAt(p) === null){
                     break
@@ -278,8 +279,8 @@ const init = () => {
           figure: fig,
           alignment: spot, 
           alignmentFocus: spot.opposite(),
-          width: (spot.equals(go.Spot.Top) || spot.equals(go.Spot.Bottom)) ? 36 : 18,
-          height: (spot.equals(go.Spot.Top) || spot.equals(go.Spot.Bottom)) ? 18 : 36,
+          width: (spot.equals(go.Spot.Top) || spot.equals(go.Spot.Bottom)) ? 54 : 27,
+          height: (spot.equals(go.Spot.Top) || spot.equals(go.Spot.Bottom)) ? 27 : 54,
           fill: "orange", 
           strokeWidth: 0,
           isActionable: true,  // needed because it's in an Adornment
@@ -329,7 +330,7 @@ const init = () => {
                 click: changeBond,
                 selectable: false
             },
-        $(go.Shape, { isPanelMain: true, strokeWidth: 2, stroke: "black" }),
+        $(go.Shape, { isPanelMain: true, strokeWidth: 3, stroke: "black" }),
     );
 
     var doubleBond = 
@@ -338,8 +339,8 @@ const init = () => {
                 click: changeBond,
                 selectable: false
             },
-        $(go.Shape, { isPanelMain: true, strokeWidth: 8, stroke: "black" }),
-        $(go.Shape, { isPanelMain: true, strokeWidth: 4, stroke: "white" }),
+        $(go.Shape, { isPanelMain: true, strokeWidth: 12, stroke: "black" }),
+        $(go.Shape, { isPanelMain: true, strokeWidth: 6, stroke: "white" }),
     );
 
     var tripleBond = 
@@ -348,9 +349,9 @@ const init = () => {
                 click: changeBond,
                 selectable: false
             },
-        $(go.Shape, { isPanelMain: true, strokeWidth: 10, stroke: "black" }),
-        $(go.Shape, { isPanelMain: true, strokeWidth: 6, stroke: "white" }),
-        $(go.Shape, { isPanelMain: true, strokeWidth: 2, stroke: "black" })
+        $(go.Shape, { isPanelMain: true, strokeWidth: 15, stroke: "black" }),
+        $(go.Shape, { isPanelMain: true, strokeWidth: 9, stroke: "white" }),
+        $(go.Shape, { isPanelMain: true, strokeWidth: 3, stroke: "black" })
     );
     
     var ionicBond = $(go.Link, { visible: false });
