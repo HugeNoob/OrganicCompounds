@@ -63,6 +63,7 @@ const init = () => {
           maxSelectionCount: 1,
           allowLink: false,  // no user-drawn links
           'dragSelectingTool.isEnabled': false,
+          "draggingTool.isCopyEnabled": false,
           'contextMenuTool.isEnabled': false,
           allowClipboard: false,
           // allowVerticalScroll: false,
