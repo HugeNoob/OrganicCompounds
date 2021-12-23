@@ -169,7 +169,7 @@ const init = () => {
               } else {
                 return node.ionicBonded === true ? 'ConnectedAnion' : 'MinusLine'
               }
-0            }).makeTwoWay(),
+              }).makeTwoWay(),
             new go.Binding("stroke", "charge", function(c) { return c === 0 ? 'transparent' : 'black'; })
         )
         )
