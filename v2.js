@@ -432,7 +432,7 @@ const addIon = () => {
 var selected = null;
 const deleteElement = () => {
     selected = myDiagram.selection.first() !== null ? myDiagram.selection.first().tb : null
-    if(selected === null || selected.key === -1 ){ return }
+    if(selected === null || myDiagram.model.nodeDataArray.length === 1){ return }
     var node = myDiagram.findNodeForKey(selected.key);
     if (node !== null) {
       myDiagram.startTransaction();
