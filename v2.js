@@ -520,6 +520,8 @@ const changeCharge = () => {
 var compound = '2-methylbutane'
 
 const answers = {
+  // 'test': 
+  
   // Alkanes
   '2-methylbutane': {
     numElements: 17,
@@ -1069,14 +1071,14 @@ const markingProcess = () => {
     updateResult('Length of your longest carbon chain is wrong.')
     return false 
   }
-  var overallCheck = 0;
+  var overallCheck = false;
   for(let longestCarbonChain of longestCarbonChains){
     // check first way
     // console.log('first check')
     for(let i = 0; i < longestCarbonChain.length; i++){
       var checkThisNode = check(longestCarbonChain[i], ans[i].charge, ans[i].bondedTo, longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
-      if(!checkThisNode) {
-        overallCheck++
+      if(checkThisNode) {
+        overallCheck = true;
         break 
       }
     }
@@ -1084,14 +1086,14 @@ const markingProcess = () => {
     // console.log('second check')
     for(let i = 0; i < longestCarbonChain.length; i++){
       var checkThisNode = check(longestCarbonChain[i], reverseAns[i].charge, reverseAns[i].bondedTo, longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
-      if(!checkThisNode) {
-        overallCheck++
-        break 
+      if(checkThisNode) {
+        overallCheck = true;
+        break
       }
     }
   }
 
-  if (overallCheck === longestCarbonChains.length*2){
+  if (overallCheck === false){
     updateResult('Your answer is wrong.')
     return false
   } else {
