@@ -292,7 +292,7 @@ const init = () => {
 
     organicTemplate.selectionAdornmentTemplate =
       $(go.Adornment, "Spot",
-        $(go.Placeholder, { padding: 5 }),
+        $(go.Placeholder, { padding: 0 }),
         makeArrowButton(go.Spot.Top, "TriangleUp", 'up'),
         makeArrowButton(go.Spot.Left, "TriangleLeft", 'left'),
         makeArrowButton(go.Spot.Right, "TriangleRight", 'right'),
@@ -520,8 +520,47 @@ const changeCharge = () => {
 var compound = '2-methylbutane'
 
 const answers = {
-  // 'test': 
+  // 'test': {"numElements":14,
+  // "data":[
+  //   {
+  //     "carbonIndex":0,
+  //     "charge":0,
+  //     "bondedTo":[
+  //       {"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},
+  //       {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},
+  //       {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},
+  //       {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}
+  //     ]
+  //   },
+  //   {
+  //     "carbonIndex":1,
+  //     "charge":0,
+  //     "bondedTo":[
+  //       {"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},
+  //       {"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},
+  //       {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},
+  //       {"element":"C","bondType":"single","charge":0,"isMainChain":false,"recurseInto":true,"bondedTo":[
+  //           {"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},
+  //           {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},
+  //           {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},
+  //           {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}
+  //         ]
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     "carbonIndex":2,
+  //     "charge":0,
+  //     "bondedTo":[
+  //       {"element":"C","bondType":"single","charge":0,"isMainChain":true,"recurseInto":false},
+  //       {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},
+  //       {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false},
+  //       {"element":"H","bondType":"single","charge":0,"isLeaf":true,"recurseInto":false}
+  //     ]
+  //   }
+  //   ]},
   
+
   // Alkanes
   '2-methylbutane': {
     numElements: 17,
@@ -922,6 +961,10 @@ const check = (currNodeKey, ansCharge, ansBondedTo, longestCarbonChain, nodeProf
   var ansBonds = [...ansBondedTo]
   var currNodeBonds = nodeProfile[currNodeKey]
 
+  // console.log('---------------------------------------------------------')
+  // console.log('Current node is' + currNodeKey.toString())
+  // console.log('the node element is ' + elementNameMap[currNodeKey])
+
   // checking for overall number of bonds 
   if(ansBonds.length !== currNodeBonds.length) { 
     // console.log('NUMBER OF BONDS TO THIS NODE IS WRONG')
@@ -940,9 +983,8 @@ const check = (currNodeKey, ansCharge, ansBondedTo, longestCarbonChain, nodeProf
     var bondType = bond[1]
     var elementCharge = chargeMap[bond[0]]
     var isLeaf = nodeProfile[bond[0]].length === 1 ? true : false
-    var isLeaf = nodeProfile[bond[0]].length === 1 ? true : false
 
-    // console.log('-------------------------------------------------')
+    // console.log('------------------------ individual bonds ----------------------------')
     // console.log('elementName')
     // console.log(elementName)
     // console.log('elementCharge')
@@ -978,6 +1020,7 @@ const check = (currNodeKey, ansCharge, ansBondedTo, longestCarbonChain, nodeProf
                 currBondCorrect = true
                 ansBonds.splice(index, 1)
               }
+              // else, the bond will not be spliced and there will be a remaining ans bond, which will be detected later on as an unmatched answer bond, hence returning false
             } 
             // if C is part of main chain, or isnt but does not require recursion
             else {
@@ -991,7 +1034,7 @@ const check = (currNodeKey, ansCharge, ansBondedTo, longestCarbonChain, nodeProf
           // if isLeaf value matches
           if (isLeaf === ansBond.isLeaf){
             
-            // if this element is leaf
+            // if this element is NOT leaf and requires recursion
             if (!isLeaf && ansBond.recurseInto){
               var subChainCorrect = check(bond[0], ansBond.charge, [...ansBond.bondedTo], longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
               
@@ -1000,8 +1043,9 @@ const check = (currNodeKey, ansCharge, ansBondedTo, longestCarbonChain, nodeProf
                 currBondCorrect = true
                 ansBonds.splice(index, 1)
               }
+              // else, the bond will not be spliced and there will be a remaining ans bond, which will be detected later on as an unmatched answer bond, hence returning false
             }
-            // else if this element is not leaf, recurse into chain
+            // else if this element is leaf, no need to recurse
             else {
               currBondCorrect = true
               ansBonds.splice(index, 1)
@@ -1020,7 +1064,7 @@ const check = (currNodeKey, ansCharge, ansBondedTo, longestCarbonChain, nodeProf
     // if this bond matches none of the ansBonds, it is wrong
     if(!currBondCorrect) { 
       // console.log('THIS BOND HAS NO MATCHES')
-      break 
+      return false
     }
   }
 
@@ -1031,7 +1075,7 @@ const check = (currNodeKey, ansCharge, ansBondedTo, longestCarbonChain, nodeProf
   // there are missing correct bonds
   else { 
     // console.log('THERE ARE MISSING CORRECT BONDS')
-    return false 
+    return false
   }
 
 }
@@ -1058,9 +1102,17 @@ const markingProcess = () => {
     var longestCarbonChains;
     for(let c of carbonLeafs){
       var tempChains = getLongestCarbonChains('', c, [c], carbonProfile)
+
+      // If tempChains are longer than curr longest, point to it
       if(tempChains[0].length > longest){
         longest = tempChains[0].length
         longestCarbonChains = tempChains
+      } 
+      // else if same length, add each chain to array
+      else if (tempChains[0].length === longest){
+        for(let chain of tempChains){
+          longestCarbonChains.push(chain)
+        }
       }
     }
   }
@@ -1071,29 +1123,36 @@ const markingProcess = () => {
     updateResult('Length of your longest carbon chain is wrong.')
     return false 
   }
-  var overallCheck = false;
+
   for(let longestCarbonChain of longestCarbonChains){
+    var check1 = true;
+    var check2 = true;
+
     // check first way
-    // console.log('first check')
     for(let i = 0; i < longestCarbonChain.length; i++){
       var checkThisNode = check(longestCarbonChain[i], ans[i].charge, ans[i].bondedTo, longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
-      if(checkThisNode) {
-        overallCheck = true;
+      if(checkThisNode !== true) {
+        check1 = false;
+        // console.log('--------------CHECK 1 NO GO BRO-------------------')
         break 
       }
     }
     // check reverse order
-    // console.log('second check')
     for(let i = 0; i < longestCarbonChain.length; i++){
       var checkThisNode = check(longestCarbonChain[i], reverseAns[i].charge, reverseAns[i].bondedTo, longestCarbonChain, nodeProfile, elementNameMap, chargeMap)
-      if(checkThisNode) {
-        overallCheck = true;
-        break
+      if(checkThisNode !== true) {
+        check2 = false;
+        // console.log('--------------CHECK 2 NO GO BRO-------------------')
+        break 
       }
+    }
+    if(check1 === true || check2 === true){
+      // console.log('YO WE GOOD')
+      break
     }
   }
 
-  if (overallCheck === false){
+  if (check1 === false && check2 === false){
     updateResult('Your answer is wrong.')
     return false
   } else {
