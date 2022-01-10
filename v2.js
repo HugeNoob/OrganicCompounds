@@ -520,6 +520,7 @@ const changeCharge = () => {
 var compound = '2-methylbutane'
 
 const answers = {
+  // methylpropane
   // 'test': {"numElements":14,
   // "data":[
   //   {
@@ -559,7 +560,6 @@ const answers = {
   //     ]
   //   }
   //   ]},
-  
 
   // Alkanes
   '2-methylbutane': {
@@ -996,7 +996,7 @@ const check = (currNodeKey, ansCharge, ansBondedTo, longestCarbonChain, nodeProf
 
     // look for matching answer bond
     var currBondCorrect = false;
-    for (ansBond of ansBonds) {
+    for (let ansBond of [...ansBonds]) {
       // get the index of this ans bond for later use 
       // (otherwise may be reassigned later in recursion which leads to incorrect deletion)
       var index = ansBonds.indexOf(ansBond)
