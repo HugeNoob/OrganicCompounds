@@ -73,7 +73,7 @@ const init = () => {
 
     // const changeCharge = (e, node) => {
     //   e.diagram.commit(function(diag) {
-    //     var nodeData = node.tb
+    //     var nodeData = node.data
     //     myDiagram.model.removeNodeData(nodeData)
     //     var charge = nodeData['charge']
     //     var elementType;
@@ -302,7 +302,7 @@ const init = () => {
     // Mapping different link templates for different types of bonds
     const changeBond = (e, link) => {
       e.diagram.commit(function(diag) {
-          var oldLinkData = link.tb
+          var oldLinkData = link.data
           var category;
           var bondCount = oldLinkData['bondCount']
           var from = oldLinkData['from']
@@ -431,7 +431,7 @@ const addIon = () => {
 
 var selected = null;
 const deleteElement = () => {
-    selected = myDiagram.selection.first() !== null ? myDiagram.selection.first().tb : null
+    selected = myDiagram.selection.first() !== null ? myDiagram.selection.first().data : null
     if(selected === null || myDiagram.model.nodeDataArray.length === 1){ return }
     var node = myDiagram.findNodeForKey(selected.key);
     if (node !== null) {
@@ -485,7 +485,7 @@ const updateResult = (result) => {
 }
 
 const changeCharge = () => {
-    selected = myDiagram.selection.first() !== null ? myDiagram.selection.first().tb : null
+    selected = myDiagram.selection.first() !== null ? myDiagram.selection.first().data : null
     if(selected === null){ return }
     var node = myDiagram.findNodeForKey(selected.key);
     if (node !== null) {
