@@ -60,15 +60,15 @@ const init = () => {
       $(go.Diagram, "myDiagramDiv",
         {
           initialScale: 1,
-          maxSelectionCount: 1,
+          draggingTool: new SnappingTool(),
           allowLink: false,  // no user-drawn links
-          'dragSelectingTool.isEnabled': false,
-          "draggingTool.isCopyEnabled": false,
-          'contextMenuTool.isEnabled': false,
-          allowClipboard: false,
+          // 'contextMenuTool.isEnabled': false,
           // allowVerticalScroll: false,
           // allowHorizontalScroll: false,
-          draggingTool: new SnappingTool(),
+          'dragSelectingTool.isEnabled': false,
+          "draggingTool.isCopyEnabled": false,
+          maxSelectionCount: 1,
+          allowClipboard: false,
         });
 
     // const changeCharge = (e, node) => {
