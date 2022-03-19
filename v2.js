@@ -431,14 +431,24 @@ const addIon = () => {
 
 var selected = null;
 const deleteElement = () => {
+    // Grab selected item
     selected = myDiagram.selection.first() !== null ? myDiagram.selection.first().data : null
-    if(selected === null || myDiagram.model.nodeDataArray.length === 1){ return }
+
+    // Handle null selection
+    if(selected === null){ return }
+
+    // Count number of organic elements left
+    var organicElements = myDiagram.model.nodeDataArray.filter(element => element.category == 'organic')
+
+    // Get selected node
     var node = myDiagram.findNodeForKey(selected.key);
-    if (node !== null) {
-      myDiagram.startTransaction();
-      myDiagram.remove(node);
-      myDiagram.commitTransaction("deleted node");
-    }
+
+    // If selected is last organic element, reject deletion
+    if(node.category == 'organic' && organicElements.length == 1) { return }
+
+    myDiagram.startTransaction();
+    myDiagram.remove(node);
+    myDiagram.commitTransaction("deleted node");
 }
 
 const setCompound = (x) => {
